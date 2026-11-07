@@ -1,25 +1,454 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="apple-mobile-web-app-capable" content="yes"><title>Prufa</title>
-<style>body{margin:0;padding:40px 24px;background:#f6f3ee;color:#22201c;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:22px;line-height:1.5}h1{font-weight:300;font-size:36px;margin:0 0 20px}.r{padding:14px 16px;background:#fff;border-radius:8px;margin:10px 0}b{color:#2f6f5e}.n{color:#a33}</style>
-</head><body><h1>Geymsluprufa &middot; útgáfa 1</h1><div id="o"></div>
+<!doctype html>
+<html lang="is">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Uppskriftir">
+<link rel="apple-touch-icon" href="ikon.png">
+<title>Uppskriftir</title>
+<style>
+/* Litir: ljós salvíugrár grunnur, dökkgrænt „kryddjurta" blek, gulur miði fyrir ábendingar.
+   Skrifað fyrir Safari 9: engar CSS-breytur, flexbox með -webkit- forskeyti. */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #eef1ec;
+  color: #1d2721;
+  font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(46,106,87,0.15);
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; -webkit-appearance: none; }
+[data-a] { cursor: pointer; }
+.sida { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+
+/* Haus */
+.haus { display: -webkit-flex; display: flex; -webkit-align-items: flex-end; align-items: flex-end; -webkit-justify-content: space-between; justify-content: space-between; margin-bottom: 26px; }
+.dags { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #5e6b63; }
+h1 { font-size: 34px; font-weight: 300; margin: 2px 0 0; line-height: 1.15; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #5e6b63; font-weight: 600; margin: 30px 0 8px; }
+.hnappur { display: inline-block; background: #2e6a57; color: #fff; border-radius: 10px; padding: 12px 18px; font-size: 17px; font-weight: 600; text-decoration: none; }
+.hnappur.ljos { background: #fff; color: #2e6a57; border: 1px solid #c9d3cb; }
+.til-baka { color: #2e6a57; font-size: 17px; text-decoration: none; display: inline-block; padding: 6px 0; margin-bottom: 14px; }
+
+/* Listar */
+.listi { background: #fff; border-radius: 12px; overflow: hidden; border: 1px solid #d6ddd5; }
+.lina { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; padding: 13px 16px; border-top: 1px solid #e4e9e3; text-decoration: none; color: inherit; }
+.lina:first-child { border-top: 0; }
+.lina:active { background: #f3f6f2; }
+.lmid { -webkit-flex: 1; flex: 1; min-width: 0; }
+.lnafn { display: block; font-size: 18px; }
+.lskyr { display: block; font-size: 14px; color: #5e6b63; margin-top: 1px; }
+.ltimi { font-size: 15px; color: #5e6b63; white-space: nowrap; margin-left: 12px; }
+.tillaga .lskyr { color: #2e6a57; }
+
+/* Uppskrift */
+.meta { color: #5e6b63; font-size: 16px; margin-top: 6px; }
+.lysing { font-size: 18px; margin: 16px 0 6px; max-width: 40em; }
+.dalkar { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; margin: 0 -12px; }
+.dalkur { -webkit-flex: 1 1 300px; flex: 1 1 300px; padding: 0 12px; min-width: 0; }
+.hraefni { list-style: none; margin: 0; padding: 0; }
+.hraefni li { padding: 7px 0; border-bottom: 1px solid #dde3dc; }
+.skrefalisti { margin: 0; padding-left: 22px; }
+.skrefalisti li { margin-bottom: 10px; }
+.stor { display: block; text-align: center; font-size: 22px; padding: 18px; margin: 30px 0 12px; border-radius: 12px; }
+.smalink { display: block; text-align: center; color: #2e6a57; font-size: 15px; padding: 8px; text-decoration: none; }
+
+/* Eldunarhamur */
+.elda { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #eef1ec; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+.ehaus { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; padding: 14px 18px 10px; }
+.ehaus .titill { -webkit-flex: 1; flex: 1; text-align: center; font-size: 16px; color: #5e6b63; padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ehaus button { font-size: 17px; color: #2e6a57; padding: 8px 4px; }
+.framvinda { display: -webkit-flex; display: flex; padding: 0 18px; }
+.framvinda span { -webkit-flex: 1; flex: 1; height: 6px; border-radius: 3px; background: #d3dbd3; margin: 0 3px; }
+.framvinda span.buid { background: #2e6a57; }
+.emid { -webkit-flex: 1; flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; padding: 26px 26px 16px; }
+.snumer { font-size: 15px; text-transform: uppercase; letter-spacing: .12em; color: #5e6b63; margin-bottom: 10px; }
+.stexti { font-size: 34px; line-height: 1.35; font-weight: 400; }
+.abending { margin-top: 28px; background: #f7ebc4; border: 1px solid #ddbd5e; border-radius: 12px; padding: 16px 18px; color: #4a3a0c; font-size: 21px; line-height: 1.4; }
+.abending b { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 4px; color: #7a5f12; }
+.efotur { display: -webkit-flex; display: flex; padding: 12px 18px 18px; }
+.efotur button { -webkit-flex: 1; flex: 1; height: 84px; border-radius: 14px; font-size: 26px; font-weight: 600; margin: 0 6px; }
+.efotur .aftur { background: #fff; color: #2e6a57; border: 1px solid #c9d3cb; }
+.efotur .fram { background: #2e6a57; color: #fff; -webkit-flex: 1.6; flex: 1.6; }
+.efotur button[disabled] { opacity: .35; }
+.yfirlag { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(29,39,33,.45); display: -webkit-flex; display: flex; -webkit-align-items: flex-end; align-items: flex-end; }
+.yfirlag .spjald { background: #fff; width: 100%; max-height: 80%; overflow: auto; -webkit-overflow-scrolling: touch; border-radius: 16px 16px 0 0; padding: 22px 24px 30px; font-size: 21px; }
+.yfirlag .spjald .hraefni li { padding: 9px 0; }
+.lokid { text-align: center; padding-top: 18vh; }
+.lokid .stexti { margin-bottom: 30px; }
+
+/* Handahóf */
+.spil { background: #fff; border: 1px solid #d6ddd5; border-radius: 16px; padding: 28px 24px; margin: 14px 0 16px; }
+.spil h1 { font-size: 30px; }
+.spil .lysing { font-size: 17px; }
+.notar { font-size: 15px; color: #2e6a57; margin-top: 8px; }
+.radhnappar { display: -webkit-flex; display: flex; margin: 0 -5px; }
+.radhnappar .hnappur { -webkit-flex: 1; flex: 1; margin: 0 5px; text-align: center; padding: 15px 10px; }
+.radhnappar .hnappur[disabled] { opacity: .35; }
+.siuhaus { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; }
+.siuyfirlit { font-size: 15px; color: #5e6b63; }
+.sia { background: #fff; border: 1px solid #d6ddd5; border-radius: 12px; padding: 6px 16px 16px; margin-top: 12px; }
+.sia h2 { margin-top: 16px; }
+.flogur { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; margin: 0 -4px; }
+.flaga { display: inline-block; margin: 4px; padding: 8px 13px; border-radius: 18px; border: 1px solid #c9d3cb; background: #fff; font-size: 16px; color: #1d2721; }
+.flaga.virk { background: #2e6a57; border-color: #2e6a57; color: #fff; }
+.flaga.utan { background: #eef1ec; color: #8a958e; text-decoration: line-through; }
+.tomt { color: #5e6b63; padding: 30px 10px; text-align: center; }
+
+@media (min-width: 900px) and (orientation: landscape) {
+  .stexti { font-size: 38px; }
+  .emid { padding: 30px 60px 16px; }
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="uppskriftir.js"></script>
 <script>
-(function(){
-  var V="1",o=document.getElementById("o"),r=[];
-  function L(k,t){r.push("<div class=r>"+k+": "+t+"</div>")}
-  var st=window.navigator.standalone?"heimaskja":"safari";
-  try{
-    localStorage.setItem("t","1");
-    var ok=localStorage.getItem("t")==="1";
-    L("Geymsla virkar",ok?"<b>Já</b>":"<span class=n>Nei</span>");
-    var k="teljari_"+st;
-    var n=parseInt(localStorage.getItem(k)||"0",10)+1;localStorage.setItem(k,""+n);
-    L("Opnað hér",n+" sinnum");
-    var f=localStorage.getItem("fyrst");if(!f){f=new Date().toLocaleString();localStorage.setItem("fyrst",f)}
-    L("Fyrst opnað",f);
-    var p=localStorage.getItem("utgafa");L("Útgáfa sem var hér síðast",p?p:"engin (ekkert geymt áður)");
-    localStorage.setItem("utgafa",V);
-  }catch(e){L("Geymsla virkar","<span class=n>Nei</span> ("+e.message+")")}
-  L("Opnað frá",st==="heimaskja"?"heimaskjá":"Safari");
-  o.innerHTML=r.join("");
+(function () {
+  var app = document.getElementById("app");
+  var VIKUDAGAR = ["sunnudagur", "mánudagur", "þriðjudagur", "miðvikudagur", "fimmtudagur", "föstudagur", "laugardagur"];
+  var MANUDIR = ["janúar", "febrúar", "mars", "apríl", "maí", "júní", "júlí", "ágúst", "september", "október", "nóvember", "desember"];
+  var DAGUR = 86400000;
+
+  if (typeof UPPSKRIFTIR === "undefined") {
+    app.innerHTML = '<div class="sida"><h1>Uppskriftirnar fundust ekki</h1><p>Skráin uppskriftir.js þarf að vera í sömu möppu og index.html.</p></div>';
+    return;
+  }
+
+  /* ---------- Geymsla ---------- */
+  function lesa(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function skrifa(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  var saga = lesa("saga", {});
+  var sia = lesa("sia", { utan: [], timi: 0, hraefni: [] });
+  var rq = lesa("rod", { rod: [], stada: 0 });
+  var nuna = null;
+  var siaOpin = false;
+
+  var byId = {};
+  var i;
+  for (i = 0; i < UPPSKRIFTIR.length; i++) byId[UPPSKRIFTIR[i].id] = UPPSKRIFTIR[i];
+
+  /* ---------- Hjálparföll ---------- */
+  function e(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function inniheldur(a, x) { for (var j = 0; j < a.length; j++) if (a[j] === x) return true; return false; }
+  function sidast(id) { var a = saga[id]; return a && a.length ? a[a.length - 1] : 0; }
+  function dagarFra(ts) {
+    var a = new Date(ts); a.setHours(0, 0, 0, 0);
+    var b = new Date(); b.setHours(0, 0, 0, 0);
+    return Math.round((b - a) / DAGUR);
+  }
+  function textiDaga(d) {
+    if (d <= 0) return "Eldað í dag";
+    if (d === 1) return "Eldað í gær";
+    return "Síðast eldað fyrir " + d + " dögum";
+  }
+  function flokkurInfo(nafn) { for (var j = 0; j < FLOKKAR.length; j++) if (FLOKKAR[j].nafn === nafn) return FLOKKAR[j]; return { nafn: nafn, engin: "Ekkert úr " + nafn }; }
+  function stokkaFylki(a, rand) {
+    for (var j = a.length - 1; j > 0; j--) { var k = Math.floor(rand() * (j + 1)); var t = a[j]; a[j] = a[k]; a[k] = t; }
+    return a;
+  }
+  /* Einföld slembitala með fræi, svo tillögurnar breytist eftir degi en ekki við hverja opnun */
+  function frae(seed) {
+    var s = seed % 2147483647; if (s <= 0) s += 2147483646;
+    return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+  }
+  function merkja(id) {
+    if (!saga[id]) saga[id] = [];
+    saga[id].push(Date.now());
+    if (saga[id].length > 20) saga[id] = saga[id].slice(-20);
+    skrifa("saga", saga);
+  }
+  function geymaNuna() { skrifa("nuna", nuna); }
+  function upp() { window.scrollTo(0, 0); }
+
+  /* ---------- Tillögur ---------- */
+  function tillogur() {
+    var d = new Date();
+    var rand = frae(d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate());
+    var hending = {};
+    var ids = [];
+    var j, r;
+    for (j = 0; j < UPPSKRIFTIR.length; j++) ids.push(UPPSKRIFTIR[j].id);
+    stokkaFylki(ids, rand);
+    for (j = 0; j < ids.length; j++) hending[ids[j]] = j;
+
+    var hopur = [];
+    for (j = 0; j < UPPSKRIFTIR.length; j++) {
+      r = UPPSKRIFTIR[j];
+      if (flokkurInfo(r.flokkur).tillogur !== false) hopur.push(r);
+    }
+    hopur.sort(function (a, b) {
+      var sa = sidast(a.id), sb = sidast(b.id);
+      if (sa !== sb) return sa - sb;
+      return hending[a.id] - hending[b.id];
+    });
+
+    var eitthvad = false;
+    for (var k in saga) if (saga.hasOwnProperty(k) && saga[k].length) { eitthvad = true; break; }
+
+    var val = [], notad = {};
+    if (eitthvad) {
+      var bil = [];
+      for (j = 0; j < FLOKKAR.length; j++) {
+        var f = FLOKKAR[j];
+        if (f.tillogur === false) continue;
+        var sf = 0, til = false;
+        for (var m = 0; m < hopur.length; m++) if (hopur[m].flokkur === f.nafn) { til = true; sf = Math.max(sf, sidast(hopur[m].id)); }
+        if (!til) continue;
+        var g = sf ? dagarFra(sf) : 9999;
+        if (g >= 7) bil.push({ f: f, g: g });
+      }
+      bil.sort(function (a, b) { return b.g - a.g; });
+      for (j = 0; j < bil.length && j < 2; j++) {
+        for (var n = 0; n < hopur.length; n++) {
+          if (hopur[n].flokkur === bil[j].f.nafn && !notad[hopur[n].id]) {
+            notad[hopur[n].id] = true;
+            val.push({ r: hopur[n], ad: bil[j].f.engin + (bil[j].g === 9999 ? " ennþá" : " í " + bil[j].g + " daga") });
+            break;
+          }
+        }
+      }
+    }
+    for (j = 0; j < hopur.length && val.length < 5; j++) {
+      r = hopur[j];
+      if (notad[r.id]) continue;
+      notad[r.id] = true;
+      var s = sidast(r.id);
+      val.push({ r: r, ad: s ? textiDaga(dagarFra(s)) : "Ekki eldað ennþá" });
+    }
+    return val;
+  }
+
+  /* ---------- Síur og handahóf ---------- */
+  function passar(r) {
+    if (inniheldur(sia.utan, r.flokkur)) return false;
+    if (sia.timi && r.timi > sia.timi) return false;
+    if (sia.hraefni.length) {
+      for (var j = 0; j < r.hraefni.length; j++) if (inniheldur(sia.hraefni, r.hraefni[j].n)) return true;
+      return false;
+    }
+    return true;
+  }
+  function notarHraefni(r) {
+    var ut = [];
+    for (var j = 0; j < r.hraefni.length; j++) if (inniheldur(sia.hraefni, r.hraefni[j].n) && !inniheldur(ut, r.hraefni[j].n)) ut.push(r.hraefni[j].n);
+    return ut;
+  }
+  function oll() {
+    var ut = [];
+    for (var j = 0; j < UPPSKRIFTIR.length; j++) {
+      var h = UPPSKRIFTIR[j].hraefni;
+      for (var k = 0; k < h.length; k++) if (!h[k].g && !inniheldur(ut, h[k].n)) ut.push(h[k].n);
+    }
+    ut.sort(function (a, b) { return a.localeCompare(b); });
+    return ut;
+  }
+  function stokka(ekkiFyrst) {
+    var ids = [];
+    for (var j = 0; j < UPPSKRIFTIR.length; j++) ids.push(UPPSKRIFTIR[j].id);
+    stokkaFylki(ids, Math.random);
+    if (ids.length > 1 && ids[0] === ekkiFyrst) { var t = ids[0]; ids[0] = ids[1]; ids[1] = t; }
+    rq = { rod: ids, stada: 0 };
+    skrifa("rod", rq);
+  }
+  function tryggjaRod() {
+    var gott = rq && rq.rod && rq.rod.length === UPPSKRIFTIR.length;
+    if (gott) for (var j = 0; j < rq.rod.length; j++) if (!byId[rq.rod[j]]) { gott = false; break; }
+    if (!gott) stokka(null);
+  }
+  function finnaFram(fra) {
+    for (var j = Math.max(fra, 0); j < rq.rod.length; j++) if (passar(byId[rq.rod[j]])) return j;
+    return -1;
+  }
+  function finnaAftur(fra) {
+    for (var j = fra; j >= 0; j--) if (passar(byId[rq.rod[j]])) return j;
+    return -1;
+  }
+  function fjoldiPassar() { var n = 0; for (var j = 0; j < UPPSKRIFTIR.length; j++) if (passar(UPPSKRIFTIR[j])) n++; return n; }
+
+  /* ---------- Skjáir ---------- */
+  function lina(r, skyr, auka) {
+    return '<a class="lina' + (auka || "") + '" data-a="opna" data-id="' + e(r.id) + '"><span class="lmid"><span class="lnafn">' + e(r.nafn) + '</span>' +
+      (skyr ? '<span class="lskyr">' + e(skyr) + '</span>' : '') + '</span><span class="ltimi">' + r.timi + ' mín</span></a>';
+  }
+
+  function heim() {
+    nuna = null; geymaNuna();
+    var d = new Date();
+    var h = '<div class="sida"><div class="haus"><div><div class="dags">' + VIKUDAGAR[d.getDay()] + ' ' + d.getDate() + '. ' + MANUDIR[d.getMonth()] + '</div>' +
+      '<h1>Hvað á að elda?</h1></div><a class="hnappur" data-a="handahof">Handahóf</a></div>';
+    var t = tillogur();
+    if (t.length) {
+      h += '<h2>Tillögur</h2><div class="listi">';
+      for (var j = 0; j < t.length; j++) h += lina(t[j].r, t[j].ad, " tillaga");
+      h += '</div>';
+    }
+    for (var k = 0; k < FLOKKAR.length; k++) {
+      var f = FLOKKAR[k], inn = "";
+      for (var m = 0; m < UPPSKRIFTIR.length; m++) if (UPPSKRIFTIR[m].flokkur === f.nafn) inn += lina(UPPSKRIFTIR[m]);
+      if (inn) h += '<h2>' + e(f.nafn) + '</h2><div class="listi">' + inn + '</div>';
+    }
+    h += '</div>';
+    app.innerHTML = h; upp();
+  }
+
+  function hraefnalisti(r) {
+    var h = '<ul class="hraefni">';
+    for (var j = 0; j < r.hraefni.length; j++) h += '<li>' + e(r.hraefni[j].t) + '</li>';
+    return h + '</ul>';
+  }
+
+  function uppskrift(id, fra) {
+    var r = byId[id]; if (!r) return heim();
+    nuna = null; geymaNuna();
+    var s = sidast(id);
+    var h = '<div class="sida"><a class="til-baka" data-a="' + (fra === "handahof" ? "handahof" : "heim") + '">‹ ' + (fra === "handahof" ? "Handahóf" : "Uppskriftir") + '</a>' +
+      '<h1>' + e(r.nafn) + '</h1><div class="meta">' + e(r.flokkur) + ' · ' + r.timi + ' mín · ' + r.skammtar + ' skammtar' +
+      (s ? ' · ' + textiDaga(dagarFra(s)).toLowerCase() : '') + '</div>' +
+      '<p class="lysing">' + e(r.lysing) + '</p>' +
+      '<div class="dalkar"><div class="dalkur"><h2>Hráefni</h2>' + hraefnalisti(r) + '</div>' +
+      '<div class="dalkur"><h2>Aðferð</h2><ol class="skrefalisti">';
+    for (var j = 0; j < r.skref.length; j++) h += '<li>' + e(r.skref[j].t) + '</li>';
+    h += '</ol></div></div>' +
+      '<a class="hnappur stor" data-a="elda" data-id="' + e(r.id) + '">Byrja að elda</a>' +
+      '<a class="smalink" data-a="merkja" data-id="' + e(r.id) + '">Ég eldaði þetta án eldunarhams</a></div>';
+    app.innerHTML = h; upp();
+  }
+
+  function elda(id, i, hraOpin) {
+    var r = byId[id]; if (!r) return heim();
+    if (i < 0) i = 0;
+    if (i > r.skref.length - 1) i = r.skref.length - 1;
+    nuna = { v: "elda", id: id, i: i, t: Date.now() }; geymaNuna();
+    var sk = r.skref[i], sidasta = i === r.skref.length - 1;
+    var h = '<div class="elda"><div class="ehaus"><button type="button" data-a="haetta">✕ Hætta</button>' +
+      '<div class="titill">' + e(r.nafn) + '</div><button type="button" data-a="hraefniOpna">Hráefni</button></div>' +
+      '<div class="framvinda">';
+    for (var j = 0; j < r.skref.length; j++) h += '<span' + (j <= i ? ' class="buid"' : '') + '></span>';
+    h += '</div><div class="emid"><div class="snumer">Skref ' + (i + 1) + ' af ' + r.skref.length + '</div>' +
+      '<div class="stexti">' + e(sk.t) + '</div>' +
+      (sk.ab ? '<div class="abending"><b>Gott að hafa í huga</b>' + e(sk.ab) + '</div>' : '') +
+      '</div><div class="efotur"><button type="button" class="aftur" data-a="aftur"' + (i === 0 ? ' disabled' : '') + '>‹ Til baka</button>' +
+      '<button type="button" class="fram" data-a="' + (sidasta ? 'klara' : 'fram') + '">' + (sidasta ? 'Klárað ✓' : 'Áfram ›') + '</button></div>';
+    if (hraOpin) h += '<div class="yfirlag" data-a="hraefniLoka"><div class="spjald"><h2 style="margin-top:0">Hráefni · ' + r.skammtar + ' skammtar</h2>' + hraefnalisti(r) + '</div></div>';
+    h += '</div>';
+    app.innerHTML = h;
+  }
+
+  function lokid(id) {
+    var r = byId[id];
+    nuna = null; geymaNuna();
+    app.innerHTML = '<div class="sida lokid"><div class="stexti">Verði þér að góðu!</div>' +
+      '<p class="meta">' + e(r ? r.nafn : "") + ' er skráð sem eldað í dag.</p>' +
+      '<a class="hnappur stor" data-a="heim">Aftur á forsíðu</a></div>';
+    upp();
+  }
+
+  function handahof() {
+    nuna = null; geymaNuna();
+    tryggjaRod();
+    var j = finnaFram(rq.stada);
+    if (j < 0 && fjoldiPassar() > 0) { stokka(null); j = finnaFram(0); }
+    if (j >= 0) { rq.stada = j; skrifa("rod", rq); }
+
+    var virkar = [];
+    if (sia.utan.length) virkar.push("án: " + sia.utan.join(", ").toLowerCase());
+    if (sia.timi) virkar.push("hámark " + sia.timi + " mín");
+    if (sia.hraefni.length) virkar.push("með: " + sia.hraefni.join(", "));
+
+    var h = '<div class="sida"><a class="til-baka" data-a="heim">‹ Uppskriftir</a>' +
+      '<div class="siuhaus"><div><h1>Handahóf</h1><div class="siuyfirlit">' + (virkar.length ? e(virkar.join(" · ")) : "Engar síur") + '</div></div>' +
+      '<a class="hnappur ljos" data-a="siaOpna">' + (siaOpin ? "Loka síu" : "Sía") + '</a></div>';
+
+    if (siaOpin) {
+      h += '<div class="sia"><h2>Flokkar</h2><div class="flogur">';
+      for (var k = 0; k < FLOKKAR.length; k++) {
+        var ut = inniheldur(sia.utan, FLOKKAR[k].nafn);
+        h += '<a class="flaga' + (ut ? ' utan' : ' virk') + '" data-a="flokkur" data-v="' + e(FLOKKAR[k].nafn) + '">' + e(FLOKKAR[k].nafn) + '</a>';
+      }
+      h += '</div><h2>Tími</h2><div class="flogur">';
+      var timar = [[0, "Skiptir ekki máli"], [30, "30 mín eða minna"], [45, "45 mín eða minna"], [60, "1 klst eða minna"]];
+      for (k = 0; k < timar.length; k++) h += '<a class="flaga' + (sia.timi === timar[k][0] ? ' virk' : '') + '" data-a="timi" data-v="' + timar[k][0] + '">' + timar[k][1] + '</a>';
+      h += '</div><h2>Á ég til</h2><div class="flogur">';
+      var hr = oll();
+      for (k = 0; k < hr.length; k++) h += '<a class="flaga' + (inniheldur(sia.hraefni, hr[k]) ? ' virk' : '') + '" data-a="hrae" data-v="' + e(hr[k]) + '">' + e(hr[k]) + '</a>';
+      h += '</div><p class="siuyfirlit">' + fjoldiPassar() + ' af ' + UPPSKRIFTIR.length + ' uppskriftum passa. <a class="smalink" style="display:inline;padding:0" data-a="hreinsa">Hreinsa síur</a></p></div>';
+    }
+
+    if (j < 0) {
+      h += '<div class="tomt">Engin uppskrift passar við síurnar.</div>';
+    } else {
+      var r = byId[rq.rod[j]];
+      var not = notarHraefni(r);
+      var fyrri = finnaAftur(j - 1) >= 0;
+      h += '<div class="spil"><div class="dags">' + e(r.flokkur) + ' · ' + r.timi + ' mín</div><h1>' + e(r.nafn) + '</h1>' +
+        '<p class="lysing">' + e(r.lysing) + '</p>' +
+        (not.length ? '<div class="notar">Notar: ' + e(not.join(", ")) + '</div>' : '') +
+        '<a class="hnappur stor" style="margin:20px 0 0" data-a="opnaH" data-id="' + e(r.id) + '">Opna uppskrift</a></div>' +
+        '<div class="radhnappar"><button type="button" class="hnappur ljos" data-a="fyrri"' + (fyrri ? '' : ' disabled') + '>‹ Fyrri</button>' +
+        '<button type="button" class="hnappur ljos" data-a="naesta">Næsta ›</button></div>';
+    }
+    h += '</div>';
+    app.innerHTML = h;
+  }
+
+  /* ---------- Aðgerðir ---------- */
+  function adgerd(a, id, v) {
+    var j;
+    switch (a) {
+      case "heim": heim(); break;
+      case "opna": uppskrift(id); break;
+      case "opnaH": uppskrift(id, "handahof"); break;
+      case "elda": elda(id, 0); break;
+      case "fram": elda(nuna.id, nuna.i + 1); break;
+      case "aftur": elda(nuna.id, nuna.i - 1); break;
+      case "hraefniOpna": elda(nuna.id, nuna.i, true); break;
+      case "hraefniLoka": elda(nuna.id, nuna.i); break;
+      case "haetta": uppskrift(nuna.id); break;
+      case "klara": var kid = nuna.id; merkja(kid); lokid(kid); break;
+      case "merkja": merkja(id); lokid(id); break;
+      case "handahof": handahof(); upp(); break;
+      case "naesta":
+        j = finnaFram(rq.stada + 1);
+        if (j < 0) { stokka(rq.rod[rq.stada]); j = finnaFram(0); }
+        rq.stada = j < 0 ? 0 : j; skrifa("rod", rq); handahof(); break;
+      case "fyrri":
+        j = finnaAftur(rq.stada - 1);
+        if (j >= 0) { rq.stada = j; skrifa("rod", rq); }
+        handahof(); break;
+      case "siaOpna": siaOpin = !siaOpin; handahof(); break;
+      case "flokkur":
+        if (inniheldur(sia.utan, v)) sia.utan = sia.utan.filter(function (x) { return x !== v; });
+        else sia.utan.push(v);
+        skrifa("sia", sia); handahof(); break;
+      case "timi": sia.timi = parseInt(v, 10) || 0; skrifa("sia", sia); handahof(); break;
+      case "hrae":
+        if (inniheldur(sia.hraefni, v)) sia.hraefni = sia.hraefni.filter(function (x) { return x !== v; });
+        else sia.hraefni.push(v);
+        skrifa("sia", sia); handahof(); break;
+      case "hreinsa": sia = { utan: [], timi: 0, hraefni: [] }; skrifa("sia", sia); handahof(); break;
+    }
+  }
+
+  document.addEventListener("click", function (ev) {
+    var t = ev.target;
+    while (t && t !== document && !(t.getAttribute && t.getAttribute("data-a"))) t = t.parentNode;
+    if (!t || t === document || t.disabled) return;
+    ev.preventDefault();
+    adgerd(t.getAttribute("data-a"), t.getAttribute("data-id"), t.getAttribute("data-v"));
+  }, false);
+
+  /* ---------- Ræsing: halda áfram í eldun ef iPadinn endurhlóð síðunni ---------- */
+  var vistad = lesa("nuna", null);
+  if (vistad && vistad.v === "elda" && byId[vistad.id] && Date.now() - vistad.t < 4 * 3600000) elda(vistad.id, vistad.i);
+  else heim();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
