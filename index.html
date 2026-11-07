@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes"><title>Prufa</title>
+<style>body{margin:0;padding:40px 24px;background:#f6f3ee;color:#22201c;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:22px;line-height:1.5}h1{font-weight:300;font-size:36px;margin:0 0 20px}.r{padding:14px 16px;background:#fff;border-radius:8px;margin:10px 0}b{color:#2f6f5e}.n{color:#a33}</style>
+</head><body><h1>Geymsluprufa &middot; útgáfa 1</h1><div id="o"></div>
+<script>
+(function(){
+  var V="1",o=document.getElementById("o"),r=[];
+  function L(k,t){r.push("<div class=r>"+k+": "+t+"</div>")}
+  var st=window.navigator.standalone?"heimaskja":"safari";
+  try{
+    localStorage.setItem("t","1");
+    var ok=localStorage.getItem("t")==="1";
+    L("Geymsla virkar",ok?"<b>Já</b>":"<span class=n>Nei</span>");
+    var k="teljari_"+st;
+    var n=parseInt(localStorage.getItem(k)||"0",10)+1;localStorage.setItem(k,""+n);
+    L("Opnað hér",n+" sinnum");
+    var f=localStorage.getItem("fyrst");if(!f){f=new Date().toLocaleString();localStorage.setItem("fyrst",f)}
+    L("Fyrst opnað",f);
+    var p=localStorage.getItem("utgafa");L("Útgáfa sem var hér síðast",p?p:"engin (ekkert geymt áður)");
+    localStorage.setItem("utgafa",V);
+  }catch(e){L("Geymsla virkar","<span class=n>Nei</span> ("+e.message+")")}
+  L("Opnað frá",st==="heimaskja"?"heimaskjá":"Safari");
+  o.innerHTML=r.join("");
+})();
+</script></body></html>
