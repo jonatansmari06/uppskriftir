@@ -290,7 +290,7 @@ var UPPSKRIFTIR = [
         h: ["150 ml ískalt vatn (kalt vatn úr krana dugar)"] }
     ],
     athugasemdir: [
-      "Farsið er fryst sem búðingur, eða steikt eða soðið sem bollur."
+      "Farsið er fryst sem búðingur og svo steikt eða soðið sem bollur."
     ]
   },
 

@@ -124,6 +124,9 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 .flaga { display: inline-block; margin: 4px; padding: 8px 13px; border-radius: 18px; border: 1px solid #c9d3cb; background: #fff; font-size: 16px; color: #1d2721; }
 .flaga.virk { background: #2e6a57; border-color: #2e6a57; color: #fff; }
 .flaga.utan { background: #eef1ec; color: #8a958e; text-decoration: line-through; }
+.aegtil { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; margin-top: 22px; }
+.aegtil h2 { margin: 0; }
+.hreinsahr { padding: 9px 14px; font-size: 15px; }
 .utgafa { text-align: center; font-size: 13px; color: #8a958e; margin-top: 36px; }
 .tomt { color: #5e6b63; padding: 30px 10px; text-align: center; }
 
@@ -135,7 +138,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 </head>
 <body>
 <div id="app"></div>
-<script src="uppskriftir.js?v=2026-11-08c"></script>
+<script src="uppskriftir.js?v=2026-11-08d"></script>
 <script>
 (function () {
   var app = document.getElementById("app");
@@ -285,6 +288,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     sia.timiVirk = !!sia.timi; sia.tmin = 0; sia.tmax = sia.timi || SMAX; delete sia.timi;
   }
   var hpos = 0; /* staða í lista þegar síað er eftir hráefnum */
+  for (var z = 0; z < sia.hraefni.length; z++) if (sia.hraefni[z] === "lambahakk") sia.hraefni[z] = "kindahakk";
   function rgba(hex, a) {
     var n = parseInt(hex.slice(1), 16);
     return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
@@ -408,7 +412,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
       if (inn) h += '<div class="flokkhaus" style="color:' + litur(f.nafn) + '"><span class="flokkmerki" style="background:' + litur(f.nafn) + '"></span>' + e(f.nafn) + '</div>' +
         '<div class="listi lit" style="border-top-color:' + litur(f.nafn) + '">' + inn + '</div>';
     }
-    h += '<p class="utgafa">Útgáfa 8. nóvember (3)</p></div>';
+    h += '<p class="utgafa">Útgáfa 8. nóvember (4)</p></div>';
     app.innerHTML = h; upp();
   }
 
@@ -534,7 +538,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
         '<div class="renna" id="renna"><div class="spor"></div><div class="bil" id="rbil"></div><div class="hnodd" id="rh0"></div><div class="hnodd" id="rh1"></div></div>' +
         '<input class="talbox" id="tmax" type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="' + SMAX + '" value="' + sia.tmax + '">' +
         '</div><div class="timiskyring" id="tskyr">' + (sia.timiVirk ? e(timaTexti()) : 'Mínútur · ' + SMAX + ' = enginn hámarkstími') + '</div></div>' +
-        '<h2>Á ég til</h2>';
+        '<div class="aegtil"><h2>Á ég til</h2>' + (sia.hraefni.length ? '<a class="hnappur ljos hreinsahr" data-a="hreinsaHr">Hreinsa hráefni (' + sia.hraefni.length + ')</a>' : '') + '</div>';
       var hopar = hraefnaHopar();
       for (var g = 0; g < hopar.length; g++) {
         var hl = hopar[g].litur || "#6b7378";
@@ -673,6 +677,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
         if (inniheldur(sia.hraefni, v)) sia.hraefni = sia.hraefni.filter(function (x) { return x !== v; });
         else sia.hraefni.push(v);
         hpos = 0; skrifa("sia", sia); handahof(); break;
+      case "hreinsaHr": sia.hraefni = []; hpos = 0; skrifa("sia", sia); handahof(); break;
       case "hreinsa": sia = { utan: [], hraefni: [], timiVirk: false, tmin: 0, tmax: SMAX }; hpos = 0; skrifa("sia", sia); handahof(); break;
     }
   }
