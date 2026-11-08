@@ -13,6 +13,11 @@
                   n = grunnheiti fyrir síuna (eitt eða fleiri),
                   g: 1 = grunnhráefni sem birtist ekki í síunni (salt, pipar, olía, hveiti, sykur, vatn)
                   v: 1 = valfrjálst (má sleppa) – telst ekki með þegar síað er eftir hráefnum
+                  heiti = nafn á hópi þar sem eitt dugar, t.d. "Kryddjurtir" eða "Hakk"
+                  sn = hvernig hvert grunnheiti birtist í hópnum (t.d. "kinda" fyrir kindahakk)
+                  tengi = "eða" eða "og/eða" á milli síðustu tveggja (sjálfgefið "og/eða")
+                  restin: 1 = sýna hin í hópnum undir „Vantar" þótt eitt sé til (kryddjurtir)
+                  syna = texti undir „Vantar" ef ekkert af grunnheitunum er til
     skref       – listi; t = texti skrefsins,
                   h = hráefnin í þessu skrefi með magni (valfrjálst),
                   ab = "Gott að hafa í huga" (valfrjálst)
@@ -21,25 +26,28 @@
 */
 
 var FLOKKAR = [
-  { nafn: "Kjötréttir",             engin: "Enginn kjötréttur",      litur: "#8a4f2a" },
-  { nafn: "Fiskréttir",             engin: "Enginn fiskréttur",      litur: "#2f6a8f" },
-  { nafn: "Grænmetisréttir",        engin: "Enginn grænmetisréttur", litur: "#4f7d2a" },
-  { nafn: "Súpur",                  engin: "Engin súpa",             litur: "#b5651d" },
-  { nafn: "Grautar og morgunmatur", engin: "Enginn grautur",         litur: "#8c6a0c" },
-  { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",         litur: "#8e2f57", tillogur: false },
-  { nafn: "Eftirréttir",            engin: "Enginn eftirréttur",     litur: "#b0476f", tillogur: false },
-  { nafn: "Verkun og geymsla",      engin: "Engin verkun",           litur: "#4f6470", tillogur: false }
+  { nafn: "Kjötréttir",             engin: "Enginn kjötréttur",      litur: "#7b4a2d" },
+  { nafn: "Fiskréttir",             engin: "Enginn fiskréttur",      litur: "#2b6c9e" },
+  { nafn: "Grænmetisréttir",        engin: "Enginn grænmetisréttur", litur: "#3f8a3a" },
+  { nafn: "Súpur",                  engin: "Engin súpa",             litur: "#c2671f" },
+  { nafn: "Grautar og morgunmatur", engin: "Enginn grautur",         litur: "#a67c12" },
+  { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",         litur: "#c0392b", tillogur: false },
+  { nafn: "Eftirréttir",            engin: "Enginn eftirréttur",     litur: "#c2577f", tillogur: false },
+  { nafn: "Verkun og geymsla",      engin: "Engin verkun",           litur: "#4d7a99", tillogur: false }
 ];
 
 /* Flokkar hráefna í síunni. Hráefni sem er ekki hér lendir í „Annað". */
 var HRAEFNAFLOKKAR = [
-  { nafn: "Grænmeti", hraefni: ["laukur", "rauðkál", "paprika", "hvítlaukur"] },
-  { nafn: "Ávextir", hraefni: ["epli"] },
-  { nafn: "Kjöt og fiskur", hraefni: ["lambahakk", "nautahakk", "kjúklingabringur", "lambakjöt"] },
-  { nafn: "Mjólkurvörur og egg", hraefni: ["egg", "mjólk", "rjómi", "kotasæla", "ostur", "mexíkóostur", "smjör", "smjörlíki"] },
-  { nafn: "Pasta, hrísgrjón og baunir", hraefni: ["hrísgrjón"] },
-  { nafn: "Krydd og jurtir", hraefni: ["steinselja", "oregano", "tímían", "kanill", "vanilludropar", "lárviðarlauf", "negulnaglar", "dill", "graslaukur", "basil", "skessujurt", "laukduft"] },
-  { nafn: "Annað", hraefni: [] }
+  { nafn: "Grænmeti",                   litur: "#3f8a3a", hraefni: ["laukur", "rauðkál", "paprika", "hvítlaukur"] },
+  { nafn: "Ávextir",                    litur: "#c0392b", hraefni: ["epli"] },
+  { nafn: "Kjöt og fiskur",             litur: "#8b3a2b", hraefni: ["kindahakk", "nautahakk", "kjúklingabringur", "lambakjöt"] },
+  { nafn: "Mjólkurvörur og egg",        litur: "#2f6fa8", hraefni: ["egg", "mjólk", "rjómi", "sýrður rjómi", "grísk jógúrt", "kotasæla", "ostur", "mexíkóostur", "smjör", "smjörlíki"] },
+  { nafn: "Pasta, hrísgrjón og baunir", litur: "#a67c12", hraefni: ["hrísgrjón", "haframjöl"] },
+  { nafn: "Hnetur og fræ",              litur: "#8a5a2b", hraefni: ["graskersfræ", "hnetur", "hörfræ", "jarðhnetur", "kasjúhnetur", "möndluflögur", "sesamfræ"] },
+  { nafn: "Krydd og jurtir",            litur: "#6b7d1e", hraefni: ["steinselja", "oregano", "tímían", "kanill", "vanilludropar", "lárviðarlauf", "negulnaglar", "dill", "graslaukur", "basil", "skessujurt", "laukduft", "kjúklingakraftur", "saltpétur"] },
+  { nafn: "Sósur og vökvar",            litur: "#c45a1a", hraefni: ["edik", "hunang", "sinnep", "tómatpúrra"] },
+  { nafn: "Brauð, rasp og kex",         litur: "#9a6a3a", hraefni: ["brauðrasp", "Ritz-kex"] },
+  { nafn: "Annað",                      litur: "#6b7378", hraefni: [] }
 ];
 
 var UPPSKRIFTIR = [
@@ -54,10 +62,11 @@ var UPPSKRIFTIR = [
       { n: "edik", t: "1 msk edik" },
       { n: "salt", t: "½ tsk salt", g: 1 },
       { n: "sykur", t: "2 tsk sykur (má sleppa)", g: 1 },
-      { n: "rjómi", t: "3–4 msk rjómi (ef vill)", v: 1 },
-      { n: "sinnep", t: "1 msk hunangssinnep eða sinnep (má sleppa)", v: 1 },
+      { n: ["rjómi", "sýrður rjómi", "grísk jógúrt"], syna: "Rjómi (sýrður rjómi eða grísk jógúrt)", t: "3–4 msk rjómi (ef vill)" },
+      { n: "sinnep", t: "1 msk hunangssinnep eða sinnep (má sleppa)" },
       { n: ["skessujurt", "dill", "steinselja", "graslaukur", "laukduft", "basil"],
-        t: "Kryddjurtir eftir smekk: skessujurt, dill, steinselja, graslaukur, laukduft, basil o.fl.", v: 1 }
+        heiti: "Kryddjurtir", restin: 1,
+        t: "Kryddjurtir eftir smekk: skessujurt, dill, steinselja, graslaukur, laukduft, basil o.fl." }
     ],
     skref: [
       { t: "Hrærðu saman olíu, ediki, salti, sykri og sinnepi.",
@@ -183,7 +192,7 @@ var UPPSKRIFTIR = [
     timiTexti: "um 40 mín",
     skammtar: "30–50 bollur",
     hraefni: [
-      { n: ["lambahakk", "nautahakk"], t: "1 kg lamba- eða nautahakk" },
+      { n: ["kindahakk", "nautahakk"], heiti: "Hakk", sn: ["kinda", "nauta"], tengi: "eða", t: "1 kg lamba- eða nautahakk" },
       { n: "egg", t: "2 egg" },
       { n: "kotasæla", t: "200 g kotasæla" },
       { n: "ostur", t: "30 g rifinn ostur" },
@@ -260,7 +269,7 @@ var UPPSKRIFTIR = [
     timi: 15,
     timiTexti: "15 mín",
     hraefni: [
-      { n: ["lambahakk", "nautahakk"], t: "500 g feitt hakk, allt nema svínahakk (helst rollu- eða hrútshakk)" },
+      { n: ["kindahakk", "nautahakk"], heiti: "Hakk", sn: ["kinda", "nauta"], tengi: "eða", t: "500 g feitt hakk, allt nema svínahakk (helst rollu- eða hrútshakk)" },
       { n: "laukur", t: "1 laukur, hakkaður" },
       { n: "hveiti", t: "85 g hveiti", g: 1 },
       { n: "lyftiduft", t: "½ tsk lyftiduft", g: 1 },

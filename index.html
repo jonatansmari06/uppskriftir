@@ -124,6 +124,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 .flaga { display: inline-block; margin: 4px; padding: 8px 13px; border-radius: 18px; border: 1px solid #c9d3cb; background: #fff; font-size: 16px; color: #1d2721; }
 .flaga.virk { background: #2e6a57; border-color: #2e6a57; color: #fff; }
 .flaga.utan { background: #eef1ec; color: #8a958e; text-decoration: line-through; }
+.utgafa { text-align: center; font-size: 13px; color: #8a958e; margin-top: 36px; }
 .tomt { color: #5e6b63; padding: 30px 10px; text-align: center; }
 
 @media (min-width: 900px) and (orientation: landscape) {
@@ -134,7 +135,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 </head>
 <body>
 <div id="app"></div>
-<script src="uppskriftir.js"></script>
+<script src="uppskriftir.js?v=2026-11-08c"></script>
 <script>
 (function () {
   var app = document.getElementById("app");
@@ -284,6 +285,10 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     sia.timiVirk = !!sia.timi; sia.tmin = 0; sia.tmax = sia.timi || SMAX; delete sia.timi;
   }
   var hpos = 0; /* staða í lista þegar síað er eftir hráefnum */
+  function rgba(hex, a) {
+    var n = parseInt(hex.slice(1), 16);
+    return "rgba(" + (n >> 16 & 255) + "," + (n >> 8 & 255) + "," + (n & 255) + "," + a + ")";
+  }
   function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   function passarTima(r) {
     if (!sia.timiVirk) return true;
@@ -294,29 +299,35 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
   function passar(r) {
     if (inniheldur(sia.utan, r.flokkur)) return false;
     if (!passarTima(r)) return false;
-    if (sia.hraefni.length) return skor(r).hef > 0;
+    if (sia.hraefni.length) return skor(r).notar.length > 0;
     return true;
+  }
+  /* „Skessujurt, dill og/eða basil" */
+  function ogEda(a, ord) {
+    if (a.length === 1) return cap(a[0]);
+    return cap(a.slice(0, -1).join(", ")) + " " + (ord || "og/eða") + " " + a[a.length - 1];
   }
   /* Hve stóran hluta hráefnanna átt þú? Valfrjáls og grunnhráefni teljast ekki með. */
   function skor(r) {
-    var hef = 0, alls = 0, vantar = [];
+    var hef = 0, alls = 0, notar = [], vantar = [];
     for (var j = 0; j < r.hraefni.length; j++) {
       var h = r.hraefni[j];
-      if (h.g || h.v || !h.nn.length) continue;
-      alls++;
-      var til = false;
-      for (var k = 0; k < h.nn.length; k++) if (inniheldur(sia.hraefni, h.nn[k])) til = true;
-      if (til) hef++; else vantar.push(cap(h.nn.join(" eða ")));
+      if (h.g || !h.nn.length) continue;
+      var til = [], ekki = [];
+      for (var k = 0; k < h.nn.length; k++) {
+        var nafn = h.sn ? h.sn[k] : h.nn[k];
+        (inniheldur(sia.hraefni, h.nn[k]) ? til : ekki).push(nafn);
+      }
+      if (!h.v) alls++;
+      if (til.length) {
+        if (!h.v) hef++;
+        notar.push(h.heiti ? h.heiti + ": " + ogEda(til, "og") : cap(til.join(" og ")));
+        if (h.heiti && h.restin && ekki.length) vantar.push(h.heiti + ": " + ogEda(ekki, h.tengi));
+      } else if (!h.v) {
+        vantar.push(h.syna || (h.heiti ? h.heiti + ": " + ogEda(ekki, h.tengi) : cap(ekki.join(" eða "))));
+      }
     }
-    return { hef: hef, alls: alls, vantar: vantar, hlutfall: alls ? hef / alls : 0 };
-  }
-  function notarHraefni(r) {
-    var ut = [];
-    for (var j = 0; j < r.hraefni.length; j++) {
-      var nn = r.hraefni[j].nn;
-      for (var k = 0; k < nn.length; k++) if (inniheldur(sia.hraefni, nn[k]) && !inniheldur(ut, nn[k])) ut.push(nn[k]);
-    }
-    return ut;
+    return { hef: hef, alls: alls, notar: notar, vantar: vantar, hlutfall: alls ? hef / alls : 0 };
   }
   /* Öll hráefni sem birtast í síunni, flokkuð og í stafrófsröð */
   function hraefnaHopar() {
@@ -332,7 +343,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     for (j = 0; j < HRAEFNAFLOKKAR.length; j++) {
       var f = HRAEFNAFLOKKAR[j], inn = [];
       for (k = 0; k < oll.length; k++) if (inniheldur(f.hraefni, oll[k])) { inn.push(oll[k]); notad[oll[k]] = true; }
-      hopar.push({ nafn: f.nafn, inn: inn });
+      hopar.push({ nafn: f.nafn, litur: f.litur, inn: inn });
     }
     var annad = null;
     for (j = 0; j < hopar.length; j++) if (hopar[j].nafn === "Annað") annad = hopar[j];
@@ -397,7 +408,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
       if (inn) h += '<div class="flokkhaus" style="color:' + litur(f.nafn) + '"><span class="flokkmerki" style="background:' + litur(f.nafn) + '"></span>' + e(f.nafn) + '</div>' +
         '<div class="listi lit" style="border-top-color:' + litur(f.nafn) + '">' + inn + '</div>';
     }
-    h += '</div>';
+    h += '<p class="utgafa">Útgáfa 8. nóvember (3)</p></div>';
     app.innerHTML = h; upp();
   }
 
@@ -507,7 +518,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     }
 
     var h = '<div class="sida"><a class="til-baka stort" data-a="heim">‹ Uppskriftir</a>' +
-      '<div class="siuhaus"><div><h1>Handahóf</h1><div class="siuyfirlit">' + (virkar.length ? e(virkar.join(" · ")) : "Engar síur") + '</div></div>' +
+      '<div class="siuhaus"><div><h1>Handahóf</h1></div>' +
       '<a class="hnappur ljos" data-a="siaOpna">' + (siaOpin ? "Loka síu" : "Sía") + '</a></div>';
 
     if (siaOpin) {
@@ -526,7 +537,8 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
         '<h2>Á ég til</h2>';
       var hopar = hraefnaHopar();
       for (var g = 0; g < hopar.length; g++) {
-        h += '<div class="siuhopur"><div class="siuflokkur">' + e(hopar[g].nafn) + '</div><div class="flogur">';
+        var hl = hopar[g].litur || "#6b7378";
+        h += '<div class="siuhopur" style="background:' + rgba(hl, 0.1) + ';border-color:' + rgba(hl, 0.28) + '"><div class="siuflokkur" style="color:' + hl + '">' + e(hopar[g].nafn) + '</div><div class="flogur">';
         var hr = hopar[g].inn;
         for (k = 0; k < hr.length; k++) h += '<a class="flaga' + (inniheldur(sia.hraefni, hr[k]) ? ' virk' : '') + '" data-a="hrae" data-v="' + e(hr[k]) + '">' + e(cap(hr[k])) + '</a>';
         h += '</div></div>';
@@ -541,11 +553,9 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
       h += '<div class="spil"><div class="dags"><span class="ldot" style="background:' + litur(r.flokkur) + '"></span>' + e(r.flokkur) + ' · ' + e(tTexti(r)) + '</div><h1>' + e(r.nafn) + '</h1>' +
         (r.lysing ? '<p class="lysing">' + e(r.lysing) + '</p>' : '');
       if (s) {
-        var not = notarHraefni(r), notC = [];
-        for (var y = 0; y < not.length; y++) notC.push(cap(not[y]));
         h += '<div class="skor">Þú átt ' + s.hef + ' af ' + s.alls + ' hráefnum (' + Math.round(s.hlutfall * 100) + '%)</div>' +
-          '<div class="notar">Notar: ' + e(notC.join(", ")) + '</div>' +
-          (s.vantar.length ? '<div class="vantar">Vantar: ' + e(s.vantar.join(", ")) + '</div>' : '<div class="notar">Þú átt allt sem þarf.</div>');
+          '<div class="notar">Notar: ' + e(s.notar.join(" · ")) + '</div>' +
+          (s.vantar.length ? '<div class="vantar">Vantar: ' + e(s.vantar.join(" · ")) + '</div>' : '<div class="notar">Þú átt allt sem þarf.</div>');
       }
       h += '<a class="hnappur stor" style="margin:20px 0 0" data-a="opnaH" data-id="' + e(r.id) + '">Opna uppskrift</a></div>' +
         '<div class="radhnappar"><button type="button" class="hnappur ljos" data-a="fyrri"' + (fyrri ? '' : ' disabled') + '>‹ Fyrri</button>' +
