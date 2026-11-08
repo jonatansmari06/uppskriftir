@@ -12,6 +12,7 @@
     hraefni     – listi; t = textinn sem birtist,
                   n = grunnheiti fyrir síuna (eitt eða fleiri),
                   g: 1 = grunnhráefni sem birtist ekki í síunni (salt, pipar, olía, hveiti, sykur, vatn)
+                  v: 1 = valfrjálst (má sleppa) – telst ekki með þegar síað er eftir hráefnum
     skref       – listi; t = texti skrefsins,
                   h = hráefnin í þessu skrefi með magni (valfrjálst),
                   ab = "Gott að hafa í huga" (valfrjálst)
@@ -20,14 +21,14 @@
 */
 
 var FLOKKAR = [
-  { nafn: "Kjötréttir",             engin: "Enginn kjötréttur" },
-  { nafn: "Fiskréttir",             engin: "Enginn fiskréttur" },
-  { nafn: "Grænmetisréttir",        engin: "Enginn grænmetisréttur" },
-  { nafn: "Súpur",                  engin: "Engin súpa" },
-  { nafn: "Grautar og morgunmatur", engin: "Enginn grautur" },
-  { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",     tillogur: false },
-  { nafn: "Eftirréttir",            engin: "Enginn eftirréttur", tillogur: false },
-  { nafn: "Verkun og geymsla",      engin: "Engin verkun",       tillogur: false }
+  { nafn: "Kjötréttir",             engin: "Enginn kjötréttur",      litur: "#8a4f2a" },
+  { nafn: "Fiskréttir",             engin: "Enginn fiskréttur",      litur: "#2f6a8f" },
+  { nafn: "Grænmetisréttir",        engin: "Enginn grænmetisréttur", litur: "#4f7d2a" },
+  { nafn: "Súpur",                  engin: "Engin súpa",             litur: "#b5651d" },
+  { nafn: "Grautar og morgunmatur", engin: "Enginn grautur",         litur: "#8c6a0c" },
+  { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",         litur: "#8e2f57", tillogur: false },
+  { nafn: "Eftirréttir",            engin: "Enginn eftirréttur",     litur: "#b0476f", tillogur: false },
+  { nafn: "Verkun og geymsla",      engin: "Engin verkun",           litur: "#4f6470", tillogur: false }
 ];
 
 /* Flokkar hráefna í síunni. Hráefni sem er ekki hér lendir í „Annað". */
@@ -53,10 +54,10 @@ var UPPSKRIFTIR = [
       { n: "edik", t: "1 msk edik" },
       { n: "salt", t: "½ tsk salt", g: 1 },
       { n: "sykur", t: "2 tsk sykur (má sleppa)", g: 1 },
-      { n: "rjómi", t: "3–4 msk rjómi (ef vill)" },
-      { n: "sinnep", t: "1 msk hunangssinnep eða sinnep (má sleppa)" },
+      { n: "rjómi", t: "3–4 msk rjómi (ef vill)", v: 1 },
+      { n: "sinnep", t: "1 msk hunangssinnep eða sinnep (má sleppa)", v: 1 },
       { n: ["skessujurt", "dill", "steinselja", "graslaukur", "laukduft", "basil"],
-        t: "Kryddjurtir eftir smekk: skessujurt, dill, steinselja, graslaukur, laukduft, basil o.fl." }
+        t: "Kryddjurtir eftir smekk: skessujurt, dill, steinselja, graslaukur, laukduft, basil o.fl.", v: 1 }
     ],
     skref: [
       { t: "Hrærðu saman olíu, ediki, salti, sykri og sinnepi.",
@@ -121,7 +122,7 @@ var UPPSKRIFTIR = [
       { n: "mjólk", t: "1,5 l nýmjólk" },
       { n: "hrísgrjón", t: "3–4 dl hrísgrjón" },
       { n: "smjör", t: "3–4 smjörklípur" },
-      { n: "kanill", t: "1 tsk kanill (má sleppa)" },
+      { n: "kanill", t: "1 tsk kanill (má sleppa)", v: 1 },
       { n: "salt", t: "½ tsk salt", g: 1 },
       { n: "vanilludropar", t: "2–3 tsk vanilludropar" }
     ],
@@ -153,10 +154,10 @@ var UPPSKRIFTIR = [
       { n: "sesamfræ", t: "1 dl sesamfræ" },
       { n: "hörfræ", t: "1 dl hörfræ" },
       { n: "kasjúhnetur", t: "1 dl kasjúhnetur, saxaðar" },
-      { n: "jarðhnetur", t: "1 dl jarðhnetur (má sleppa)" },
+      { n: "jarðhnetur", t: "1 dl jarðhnetur (má sleppa)", v: 1 },
       { n: "hunang", t: "4 msk hunang" },
       { n: "kókosolía", t: "2 kúfaðar msk kókosolía", g: 1 },
-      { n: ["vanilludropar", "kanill"], t: "Vanilludropar eða kanill ef vill" }
+      { n: ["vanilludropar", "kanill"], t: "Vanilludropar eða kanill ef vill", v: 1 }
     ],
     skref: [
       { t: "Hitaðu ofninn í 160°C.",
@@ -193,7 +194,7 @@ var UPPSKRIFTIR = [
       { n: "oregano", t: "1 tsk oregano" },
       { n: "tímían", t: "1 tsk tímían" },
       { n: "salt", t: "2 tsk salt", g: 1 },
-      { n: "laukur", t: "Smá saxaður laukur ef vill" }
+      { n: "laukur", t: "Smá saxaður laukur ef vill", v: 1 }
     ],
     skref: [
       { t: "Hitaðu ofninn í 180°C á yfir- og undirhita, eða á blæstri ef þú bakar á mörgum plötum í einu.",
@@ -225,7 +226,7 @@ var UPPSKRIFTIR = [
       { n: "rjómi", t: "250 ml rjómi" },
       { n: "kjúklingakraftur", t: "200 ml kjúklingasoð (1 teningur í vatni)" },
       { n: "salt", t: "Salt eftir þörfum", g: 1 },
-      { n: "tímían", t: "Pipar og tímían" },
+      { n: "tímían", t: "Pipar og tímían", v: 1 },
       { n: "hvítlaukur", t: "1–2 hvítlauksrif, kramin" },
       { n: "tómatpúrra", t: "2 msk tómatpúrra úr dós" },
       { n: "ostur", t: "Rifinn ostur eftir smekk" }
