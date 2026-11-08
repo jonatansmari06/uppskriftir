@@ -1,309 +1,317 @@
 /*
   Uppskriftir fyrir uppskriftabókina.
+
   Hver uppskrift:
-    id        – stutt einkvæmt heiti, bara litlir stafir og bandstrik
-    nafn      – heiti réttarins
-    flokkur   – verður að passa við nafn í FLOKKAR hér fyrir neðan
-    timi      – heildartími í mínútum
-    skammtar  – fyrir hve marga
-    lysing    – stutt lýsing
-    hraefni   – listi; n = grunnheiti fyrir síuna, t = textinn sem birtist,
-                g: 1 = grunnhráefni (salt, olía o.þ.h.) sem birtist ekki í síunni
-    skref     – listi; t = texti skrefsins, ab = "gott að hafa í huga" (valfrjálst)
+    id          – stutt einkvæmt heiti, bara litlir stafir og bandstrik
+    nafn        – heiti réttarins
+    flokkur     – verður að passa við nafn í FLOKKAR
+    timi        – heildartími í mínútum (notað í síunni)
+    timiTexti   – (valfrjálst) hvernig tíminn birtist, t.d. "30 mín + 10 dagar"
+    skammtar    – (valfrjálst) texti, t.d. "3–4" eða "30–50 bollur"
+    lysing      – (valfrjálst) stutt lýsing
+    hraefni     – listi; t = textinn sem birtist,
+                  n = grunnheiti fyrir síuna (eitt eða fleiri),
+                  g: 1 = grunnhráefni sem birtist ekki í síunni (salt, pipar, olía, hveiti, sykur, vatn)
+    skref       – listi; t = texti skrefsins,
+                  h = hráefnin í þessu skrefi með magni (valfrjálst),
+                  ab = "Gott að hafa í huga" (valfrjálst)
+    athugasemdir – (valfrjálst) listi af athugasemdum
+    tillaga     – (valfrjálst) t.d. hvað er gott að bera fram með
 */
 
 var FLOKKAR = [
-  { nafn: "Kjötréttir",      engin: "Enginn kjötréttur" },
-  { nafn: "Fiskréttir",      engin: "Enginn fiskréttur" },
-  { nafn: "Grænmetisréttir", engin: "Enginn grænmetisréttur" },
-  { nafn: "Súpur",           engin: "Engin súpa" },
-  { nafn: "Eftirréttir",     engin: "Enginn eftirréttur", tillogur: false }
+  { nafn: "Kjötréttir",             engin: "Enginn kjötréttur" },
+  { nafn: "Fiskréttir",             engin: "Enginn fiskréttur" },
+  { nafn: "Grænmetisréttir",        engin: "Enginn grænmetisréttur" },
+  { nafn: "Súpur",                  engin: "Engin súpa" },
+  { nafn: "Grautar og morgunmatur", engin: "Enginn grautur" },
+  { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",     tillogur: false },
+  { nafn: "Eftirréttir",            engin: "Enginn eftirréttur", tillogur: false },
+  { nafn: "Verkun og geymsla",      engin: "Engin verkun",       tillogur: false }
+];
+
+/* Flokkar hráefna í síunni. Hráefni sem er ekki hér lendir í „Annað". */
+var HRAEFNAFLOKKAR = [
+  { nafn: "Grænmeti", hraefni: ["laukur", "rauðkál", "paprika", "hvítlaukur"] },
+  { nafn: "Ávextir", hraefni: ["epli"] },
+  { nafn: "Kjöt og fiskur", hraefni: ["lambahakk", "nautahakk", "kjúklingabringur", "lambakjöt"] },
+  { nafn: "Mjólkurvörur og egg", hraefni: ["egg", "mjólk", "rjómi", "kotasæla", "ostur", "mexíkóostur", "smjör", "smjörlíki"] },
+  { nafn: "Pasta, hrísgrjón og baunir", hraefni: ["hrísgrjón"] },
+  { nafn: "Krydd og jurtir", hraefni: ["steinselja", "oregano", "tímían", "kanill", "vanilludropar", "lárviðarlauf", "negulnaglar", "dill", "graslaukur", "basil", "skessujurt", "laukduft"] },
+  { nafn: "Annað", hraefni: [] }
 ];
 
 var UPPSKRIFTIR = [
   {
-    id: "plokkfiskur",
-    nafn: "Plokkfiskur",
-    flokkur: "Fiskréttir",
-    timi: 40,
-    skammtar: 4,
-    lysing: "Klassískur heimilismatur úr soðinni ýsu, kartöflum og hvítri sósu. Bestur með rúgbrauði og smjöri.",
+    id: "salatsosa",
+    nafn: "Salatsósa",
+    flokkur: "Sósur og meðlæti",
+    timi: 5,
+    skammtar: "1 meðalstórt salat",
     hraefni: [
-      { n: "ýsa", t: "600 g ýsa eða þorskur, roð- og beinlaus" },
-      { n: "kartöflur", t: "800 g kartöflur" },
+      { n: "ólífuolía", t: "3–4 msk ólífuolía", g: 1 },
+      { n: "edik", t: "1 msk edik" },
+      { n: "salt", t: "½ tsk salt", g: 1 },
+      { n: "sykur", t: "2 tsk sykur (má sleppa)", g: 1 },
+      { n: "rjómi", t: "3–4 msk rjómi (ef vill)" },
+      { n: "sinnep", t: "1 msk hunangssinnep eða sinnep (má sleppa)" },
+      { n: ["skessujurt", "dill", "steinselja", "graslaukur", "laukduft", "basil"],
+        t: "Kryddjurtir eftir smekk: skessujurt, dill, steinselja, graslaukur, laukduft, basil o.fl." }
+    ],
+    skref: [
+      { t: "Hrærðu saman olíu, ediki, salti, sykri og sinnepi.",
+        h: ["3–4 msk ólífuolía", "1 msk edik", "½ tsk salt", "2 tsk sykur", "1 msk hunangssinnep eða sinnep"],
+        ab: "Ef þú notar ferskar kryddjurtir, saxaðu þær núna. Þær fara út í í næsta skrefi." },
+      { t: "Hrærðu kryddjurtunum og rjómanum út í.",
+        h: ["Kryddjurtir eftir smekk", "3–4 msk rjómi"],
+        ab: "Ef tími gefst, leyfðu sósunni að standa í 10–15 mínútur. Þá tekur hún betur í sig bragðið af kryddjurtunum." },
+      { t: "Blandaðu sósunni saman við salatið rétt áður en það er borið fram.",
+        ab: "Hrærðu sósuna aftur rétt áður en hún fer á salatið, því olían og edikið skilja sig þegar hún stendur." }
+    ],
+    athugasemdir: [
+      "Það má nota sýrðan rjóma eða gríska jógúrt í staðinn fyrir rjómann.",
+      "Notaðu ferskar kryddjurtir ef þær eru til, annars þurrkaðar.",
+      "Best er að nota rauð- eða hvítvínsedik, annars borðedik."
+    ]
+  },
+
+  {
+    id: "raudkal",
+    nafn: "Rauðkál",
+    flokkur: "Sósur og meðlæti",
+    timi: 60,
+    timiTexti: "um 1 klst",
+    skammtar: "4–6",
+    hraefni: [
+      { n: "rauðkál", t: "1 kg rauðkál" },
+      { n: "smjörlíki", t: "50 g smjörlíki" },
       { n: "laukur", t: "1 laukur" },
-      { n: "smjör", t: "50 g smjör" },
-      { n: "hveiti", t: "3 msk hveiti", g: 1 },
-      { n: "mjólk", t: "4–5 dl mjólk" },
-      { n: "graslaukur", t: "Graslaukur til að strá yfir" },
-      { n: "rúgbrauð", t: "Rúgbrauð til að bera fram" },
-      { n: "salt", t: "Salt og hvítur pipar", g: 1 }
+      { n: "epli", t: "2 epli, afhýdd" },
+      { n: "sykur", t: "3 msk sykur", g: 1 },
+      { n: "edik", t: "2–4 msk edik" },
+      { n: "vatn", t: "250 ml vatn", g: 1 },
+      { n: "salt", t: "Salt eftir smekk", g: 1 },
+      { n: "lárviðarlauf", t: "1 lárviðarlauf" },
+      { n: "negulnaglar", t: "2–3 negulnaglar" }
     ],
     skref: [
-      { t: "Sjóddu kartöflurnar í saltvatni þar til þær eru mjúkar, um 20 mínútur.",
-        ab: "Settu fiskinn í pott með léttsöltuðu vatni á meðan, hann á að sjóða í næsta skrefi." },
-      { t: "Sjóddu fiskinn í 5–7 mínútur. Taktu hann upp úr og losaðu hann í flögur.",
-        ab: "Saxaðu laukinn meðan fiskurinn sýður." },
-      { t: "Flysjaðu kartöflurnar og skerðu þær í bita." },
-      { t: "Bræddu smjörið í stórum potti og mýktu laukinn í því í 3–4 mínútur.",
-        ab: "Mældu mjólkina núna. Í næsta skrefi þarftu að hella henni jafnt og þétt út í og hræra á meðan." },
-      { t: "Stráðu hveitinu yfir laukinn og hrærðu. Helltu mjólkinni út í smátt og smátt þar til sósan er þykk og slétt." },
-      { t: "Bættu fiskinum og kartöflunum út í og stappaðu gróft saman. Kryddaðu með salti og pipar og stráðu graslauk yfir." }
+      { t: "Steiktu smáskorinn lauk, epli og sykur í smjörlíkinu þar til allt er mjúkt.",
+        h: ["50 g smjörlíki", "1 laukur", "2 epli, afhýdd", "3 msk sykur"],
+        ab: "Saxaðu eða rífðu rauðkálið (1 kg) meðan laukurinn og eplin mýkjast. Það fer út í í næsta skrefi." },
+      { t: "Bættu rauðkálinu út í og strax á eftir edikinu. Lokaðu pottinum og láttu malla í 10 mínútur.",
+        h: ["1 kg rauðkál", "2–4 msk edik"],
+        ab: "Mældu vatnið (250 ml) og taktu lárviðarlaufið (1) og negulnaglana (2–3) fram meðan kálið mallar." },
+      { t: "Bættu vatninu, lárviðarlaufinu, negulnöglunum og salti við og láttu malla á lágum hita í 30–45 mínútur.",
+        h: ["250 ml vatn", "1 lárviðarlauf", "2–3 negulnaglar", "Salt eftir smekk"],
+        ab: "Taktu lárviðarlaufið og negulnaglana upp úr áður en þú berð kálið fram." }
+    ],
+    athugasemdir: [
+      "Notaðu borðedik. Það má líka nota hvít- eða rauðvínsedik."
     ]
   },
+
   {
-    id: "lax-i-ofni",
-    nafn: "Lax í ofni með sítrónu",
-    flokkur: "Fiskréttir",
+    id: "grjonagrautur",
+    nafn: "Grjónagrautur í ofni",
+    flokkur: "Grautar og morgunmatur",
+    timi: 100,
+    timiTexti: "um 1 klst 40 mín",
+    skammtar: "3–4",
+    hraefni: [
+      { n: "mjólk", t: "1,5 l nýmjólk" },
+      { n: "hrísgrjón", t: "3–4 dl hrísgrjón" },
+      { n: "smjör", t: "3–4 smjörklípur" },
+      { n: "kanill", t: "1 tsk kanill (má sleppa)" },
+      { n: "salt", t: "½ tsk salt", g: 1 },
+      { n: "vanilludropar", t: "2–3 tsk vanilludropar" }
+    ],
+    skref: [
+      { t: "Hitaðu ofninn í 180°C." },
+      { t: "Blandaðu öllu saman í eldföstu móti og settu álpappír yfir.",
+        h: ["1,5 l nýmjólk", "3–4 dl hrísgrjón", "3–4 smjörklípur", "1 tsk kanill (má sleppa)", "½ tsk salt", "2–3 tsk vanilludropar"] },
+      { t: "Bakaðu í 90 mínútur.",
+        ab: "Taktu til það sem þú berð grautinn fram með á meðan." },
+      { t: "Hrærðu í grautnum og smakkaðu hrísgrjónin til að gá hvort þau séu soðin. Ef mjólkin hefur ekki gufað að mestu upp, leyfðu grautnum að vera lengur í ofninum." }
+    ],
+    athugasemdir: [
+      "Mamma sleppti kanilnum alltaf."
+    ],
+    tillaga: "Berðu grautinn fram með kanilsykri, rúsínum eða slátri."
+  },
+
+  {
+    id: "musli",
+    nafn: "Müsli",
+    flokkur: "Grautar og morgunmatur",
     timi: 40,
-    skammtar: 3,
-    lysing: "Lax, kartöflur og spergilkál bakað saman í einni ofnskúffu. Lítið uppvask.",
+    timiTexti: "15–33 mín í ofni",
+    skammtar: "um 15",
     hraefni: [
-      { n: "lax", t: "500 g lax" },
-      { n: "kartöflur", t: "600 g smáar kartöflur" },
-      { n: "spergilkál", t: "1 spergilkálshaus" },
-      { n: "sítróna", t: "1 sítróna" },
-      { n: "hvítlaukur", t: "2 hvítlauksrif" },
-      { n: "dill", t: "Ferskt dill" },
-      { n: "ólífuolía", t: "3 msk ólífuolía", g: 1 },
-      { n: "salt", t: "Salt og pipar", g: 1 }
+      { n: "haframjöl", t: "5 dl haframjöl (tröllahafrar)" },
+      { n: ["hnetur", "möndluflögur"], t: "1 dl hnetur eða möndluflögur" },
+      { n: "graskersfræ", t: "1 dl graskersfræ" },
+      { n: "sesamfræ", t: "1 dl sesamfræ" },
+      { n: "hörfræ", t: "1 dl hörfræ" },
+      { n: "kasjúhnetur", t: "1 dl kasjúhnetur, saxaðar" },
+      { n: "jarðhnetur", t: "1 dl jarðhnetur (má sleppa)" },
+      { n: "hunang", t: "4 msk hunang" },
+      { n: "kókosolía", t: "2 kúfaðar msk kókosolía", g: 1 },
+      { n: ["vanilludropar", "kanill"], t: "Vanilludropar eða kanill ef vill" }
     ],
     skref: [
-      { t: "Hitaðu ofninn í 200°C. Skerðu kartöflurnar í tvennt.",
-        ab: "Taktu laxinn úr kæli núna svo hann sé ekki ískaldur þegar hann fer í ofninn í skrefi 3." },
-      { t: "Veltu kartöflunum upp úr helmingnum af olíunni, salti og pipar. Bakaðu í 20 mínútur.",
-        ab: "Skerðu spergilkálið og sítrónuna og saxaðu hvítlaukinn og dillið meðan kartöflurnar bakast." },
-      { t: "Leggðu laxinn og spergilkálið á milli kartaflanna. Dreifðu hvítlauk, sítrónusneiðum og restinni af olíunni yfir." },
-      { t: "Bakaðu í 12–15 mínútur, þar til laxinn flagnar auðveldlega. Stráðu dilli yfir og kreistu sítrónusafa yfir allt." }
+      { t: "Hitaðu ofninn í 160°C.",
+        ab: "Saxaðu kasjúhneturnar (1 dl) meðan ofninn hitnar." },
+      { t: "Hitaðu hunangið og kókosolíuna aðeins saman, þar til olían er bráðin.",
+        h: ["4 msk hunang", "2 kúfaðar msk kókosolía", "Vanilludropar eða kanill ef vill"] },
+      { t: "Blandaðu öllu saman í skál.",
+        h: ["5 dl haframjöl", "1 dl hnetur eða möndluflögur", "1 dl graskersfræ", "1 dl sesamfræ", "1 dl hörfræ", "1 dl kasjúhnetur", "1 dl jarðhnetur"] },
+      { t: "Dreifðu blöndunni á bökunarpappír á ofnplötu." },
+      { t: "Bakaðu í 15–33 mínútur og hrærðu af og til á meðan.",
+        ab: "Fylgstu vel með síðustu mínúturnar, því hnetur og fræ brenna fljótt." }
+    ],
+    athugasemdir: [
+      "Geymist í lokaðri krukku."
     ]
   },
+
   {
-    id: "kjotbollur",
-    nafn: "Kjötbollur í brúnni sósu",
+    id: "hakkbollur",
+    nafn: "Hakkbollur í ofni",
     flokkur: "Kjötréttir",
-    timi: 50,
-    skammtar: 4,
-    lysing: "Heimagerðar kjötbollur í rjómalagaðri brúnni sósu, með kartöflum og sultu.",
+    timi: 40,
+    timiTexti: "um 40 mín",
+    skammtar: "30–50 bollur",
     hraefni: [
-      { n: "hakk", t: "500 g nauta- eða svínahakk" },
+      { n: ["lambahakk", "nautahakk"], t: "1 kg lamba- eða nautahakk" },
+      { n: "egg", t: "2 egg" },
+      { n: "kotasæla", t: "200 g kotasæla" },
+      { n: "ostur", t: "30 g rifinn ostur" },
+      { n: "mexíkóostur", t: "30 g rifinn mexíkóostur" },
+      { n: ["brauðrasp", "Ritz-kex"], t: "30 g brauðrasp eða mulið Ritz-kex" },
+      { n: "hvítlaukur", t: "2 hvítlauksrif, kramin" },
+      { n: "steinselja", t: "1 tsk steinselja" },
+      { n: "oregano", t: "1 tsk oregano" },
+      { n: "tímían", t: "1 tsk tímían" },
+      { n: "salt", t: "2 tsk salt", g: 1 },
+      { n: "laukur", t: "Smá saxaður laukur ef vill" }
+    ],
+    skref: [
+      { t: "Hitaðu ofninn í 180°C á yfir- og undirhita, eða á blæstri ef þú bakar á mörgum plötum í einu.",
+        ab: "Kremdu hvítlaukinn (2 rif) og saxaðu laukinn meðan ofninn hitnar." },
+      { t: "Blandaðu öllu vel saman í skál.",
+        h: ["1 kg lamba- eða nautahakk", "2 egg", "200 g kotasæla", "30 g rifinn ostur", "30 g rifinn mexíkóostur", "30 g brauðrasp eða mulið Ritz-kex", "2 hvítlauksrif", "1 tsk steinselja", "1 tsk oregano", "1 tsk tímían", "2 tsk salt", "Smá saxaður laukur ef vill"] },
+      { t: "Mótaðu bollur og raðaðu þeim á bökunarpappír á ofnplötu. Fín stærð er að taka skammtinn með matskeið.",
+        ab: "Settu kartöflurnar í pott núna, svo þær verði tilbúnar á sama tíma og bollurnar." },
+      { t: "Bakaðu í 20–25 mínútur, eða þar til bollurnar eru vel brúnar. Stærð bollanna hefur áhrif á bökunartímann." }
+    ],
+    athugasemdir: [
+      "Ef þú átt ekki brauðrasp eða kex má nota hafragrjón.",
+      "Gott að frysta afganginn."
+    ],
+    tillaga: "Berðu bollurnar fram með kartöflum og brúnni sósu. Einnig er hægt að hafa baunir, kartöflumús, rauðrófur og/eða súrar gúrkur."
+  },
+
+  {
+    id: "kjuklingur-paprika",
+    nafn: "Kjúklinga- og paprikuhrísgrjónaréttur í ofni",
+    flokkur: "Kjötréttir",
+    timi: 70,
+    timiTexti: "um 1 klst 10 mín",
+    skammtar: "3–4",
+    hraefni: [
+      { n: "hrísgrjón", t: "120 g ósoðin parboiled hrísgrjón" },
+      { n: "paprika", t: "2 rauðar paprikur" },
+      { n: "kjúklingabringur", t: "400 g gróft skornar kjúklingabringur" },
+      { n: "rjómi", t: "250 ml rjómi" },
+      { n: "kjúklingakraftur", t: "200 ml kjúklingasoð (1 teningur í vatni)" },
+      { n: "salt", t: "Salt eftir þörfum", g: 1 },
+      { n: "tímían", t: "Pipar og tímían" },
+      { n: "hvítlaukur", t: "1–2 hvítlauksrif, kramin" },
+      { n: "tómatpúrra", t: "2 msk tómatpúrra úr dós" },
+      { n: "ostur", t: "Rifinn ostur eftir smekk" }
+    ],
+    skref: [
+      { t: "Hitaðu ofninn í 180°C.",
+        ab: "Skerðu paprikurnar (2) og kjúklinginn (400 g) meðan ofninn hitnar." },
+      { t: "Settu hrísgrjónin neðst í eldfast mót og saltaðu aðeins.",
+        h: ["120 g hrísgrjón", "Salt"] },
+      { t: "Dreifðu paprikunni yfir.",
+        h: ["2 rauðar paprikur"] },
+      { t: "Leggðu kjúklinginn yfir paprikuna og kryddaðu eftir smekk.",
+        h: ["400 g kjúklingabringur", "Salt, pipar og tímían"],
+        ab: "Leystu kjúklingateninginn (1) upp í heitu vatni (200 ml) núna. Soðið á að vera volgt í næsta skrefi." },
+      { t: "Blandaðu volga soðinu saman við tómatpúrruna og rjómann og helltu yfir allt.",
+        h: ["200 ml kjúklingasoð", "2 msk tómatpúrra", "250 ml rjómi"] },
+      { t: "Rífðu hvítlaukinn yfir og stráðu rifnum osti vel yfir allt.",
+        h: ["1–2 hvítlauksrif", "Rifinn ostur eftir smekk"] },
+      { t: "Bakaðu í 45–55 mínútur, eða lengur ef þarf.",
+        ab: "Athugaðu hvort hrísgrjónin séu orðin mjúk áður en þú tekur réttinn út." }
+    ],
+    athugasemdir: [
+      "Enginn álpappír þegar ostur er settur ofan á."
+    ]
+  },
+
+  {
+    id: "kjotfars",
+    nafn: "Kjötfars",
+    flokkur: "Kjötréttir",
+    timi: 15,
+    timiTexti: "15 mín",
+    hraefni: [
+      { n: ["lambahakk", "nautahakk"], t: "500 g feitt hakk, allt nema svínahakk (helst rollu- eða hrútshakk)" },
+      { n: "laukur", t: "1 laukur, hakkaður" },
+      { n: "hveiti", t: "85 g hveiti", g: 1 },
+      { n: "lyftiduft", t: "½ tsk lyftiduft", g: 1 },
       { n: "egg", t: "1 egg" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "brauðrasp", t: "1 dl brauðrasp" },
-      { n: "mjólk", t: "1 dl mjólk" },
-      { n: "kjötkraftur", t: "1 kjötkraftsteningur í 5 dl af heitu vatni" },
-      { n: "hveiti", t: "2 msk hveiti", g: 1 },
-      { n: "rjómi", t: "1 dl rjómi" },
-      { n: "smjör", t: "Smjör til steikingar" },
-      { n: "kartöflur", t: "800 g kartöflur" },
-      { n: "sulta", t: "Rifsberjasulta til að bera fram" },
-      { n: "salt", t: "Salt og pipar", g: 1 }
+      { n: "salt", t: "1½ tsk salt", g: 1 },
+      { n: "pipar", t: "¼ tsk pipar", g: 1 },
+      { n: "tímían", t: "1 tsk tímían" },
+      { n: "vatn", t: "150 ml ískalt vatn", g: 1 }
     ],
     skref: [
-      { t: "Settu kartöflurnar í pott með köldu vatni og sjóddu í um 20 mínútur.",
-        ab: "Leggðu raspið í bleyti í mjólkinni núna. Það þarf að mýkjast áður en það fer í hakkið í næsta skrefi." },
-      { t: "Saxaðu laukinn mjög smátt og blandaðu honum saman við hakkið, eggið, bleytta raspið, salt og pipar." },
-      { t: "Mótaðu bollur á stærð við golfkúlur.",
-        ab: "Leystu kjötkraftinn upp í heita vatninu núna. Hann fer í sósuna í skrefi 5." },
-      { t: "Brúnaðu bollurnar í smjöri á pönnu, í nokkrum skömmtum. Taktu þær til hliðar." },
-      { t: "Stráðu hveitinu á pönnuna og hrærðu. Helltu kraftinum út í smátt og smátt og bættu rjómanum við." },
-      { t: "Settu bollurnar aftur út í sósuna og láttu malla undir loki í 10–15 mínútur. Berðu fram með kartöflum og sultu." }
+      { t: "Hrærðu hakkið og laukinn saman í hrærivél með hrærara í nokkrar mínútur.",
+        h: ["500 g hakk", "1 laukur, hakkaður"] },
+      { t: "Bættu hveiti, lyftidufti og eggi út í og hrærðu lengi saman, um 5 mínútur.",
+        h: ["85 g hveiti", "½ tsk lyftiduft", "1 egg"] },
+      { t: "Bættu salti og kryddi út í.",
+        h: ["1½ tsk salt", "¼ tsk pipar", "1 tsk tímían"] },
+      { t: "Láttu vélina ganga áfram og helltu ísköldu vatninu hægt og rólega saman við.",
+        h: ["150 ml ískalt vatn (kalt vatn úr krana dugar)"] }
+    ],
+    athugasemdir: [
+      "Farsið er fryst sem búðingur, eða steikt eða soðið sem bollur."
     ]
   },
+
   {
-    id: "bolognese",
-    nafn: "Spagettí bolognese",
-    flokkur: "Kjötréttir",
-    timi: 45,
-    skammtar: 4,
-    lysing: "Hakk og tómatsósa sem fær að malla í rólegheitum, borin fram með spagettíi og parmesan.",
+    id: "saltkjot",
+    nafn: "Saltkjöt Gumma",
+    flokkur: "Verkun og geymsla",
+    timi: 14430,
+    timiTexti: "30 mín + 10 dagar",
+    skammtar: "10 kg kjöt",
     hraefni: [
-      { n: "hakk", t: "500 g nautahakk" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "hvítlaukur", t: "2 hvítlauksrif" },
-      { n: "gulrót", t: "1 gulrót" },
-      { n: "tómatar í dós", t: "1 dós niðursoðnir tómatar" },
-      { n: "tómatpúrra", t: "2 msk tómatpúrra" },
-      { n: "oregano", t: "1 tsk oregano", g: 1 },
-      { n: "spagettí", t: "400 g spagettí" },
-      { n: "parmesan", t: "Parmesan til að bera fram" },
-      { n: "ólífuolía", t: "Ólífuolía", g: 1 },
-      { n: "salt", t: "Salt og pipar", g: 1 }
+      { n: "lambakjöt", t: "10 kg kjöt í stórum bitum" },
+      { n: "salt", t: "600 g salt", g: 1 },
+      { n: "saltpétur", t: "u.þ.b. ⅕ tsk saltpétur" },
+      { n: "sykur", t: "2 msk sykur (ekki sleppa)", g: 1 }
     ],
     skref: [
-      { t: "Saxaðu laukinn, hvítlaukinn og gulrótina smátt." },
-      { t: "Hitaðu olíu í potti og steiktu grænmetið í um 5 mínútur." },
-      { t: "Bættu hakkinu við og brúnaðu það vel.",
-        ab: "Settu stóran pott af vatni á helluna fyrir spagettíið núna. Það tekur tíma að ná suðu." },
-      { t: "Bættu tómötunum, púrrunni og oregano við. Saltaðu, pipraðu og láttu malla í 20 mínútur." },
-      { t: "Sjóddu spagettíið í söltuðu vatni samkvæmt leiðbeiningum á pakkanum meðan sósan mallar." },
-      { t: "Helltu vatninu af spagettíinu og berðu fram með sósunni og rifnum parmesan." }
-    ]
-  },
-  {
-    id: "kokoskarri",
-    nafn: "Kjúklingur í kókoskarríi",
-    flokkur: "Kjötréttir",
-    timi: 35,
-    skammtar: 4,
-    lysing: "Mildur og rjómakenndur kjúklingaréttur með rauðu karríi og kókosmjólk, borinn fram með hrísgrjónum.",
-    hraefni: [
-      { n: "kjúklingur", t: "600 g kjúklingabringur" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "hvítlaukur", t: "2 hvítlauksrif" },
-      { n: "engifer", t: "2 cm ferskt engifer" },
-      { n: "karrímauk", t: "2 msk rautt karrímauk" },
-      { n: "kókosmjólk", t: "1 dós kókosmjólk" },
-      { n: "paprika", t: "1 rauð paprika" },
-      { n: "spínat", t: "2 lúkur spínat" },
-      { n: "límóna", t: "½ límóna" },
-      { n: "hrísgrjón", t: "3 dl hrísgrjón" },
-      { n: "olía", t: "Olía til steikingar", g: 1 }
+      { t: "Blandaðu öllum þurrefnunum saman.",
+        h: ["600 g salt", "⅕ tsk saltpétur", "2 msk sykur"] },
+      { t: "Sáldraðu smá af blöndunni á botninn á kútnum." },
+      { t: "Veltu kjötbitunum upp úr blöndunni.",
+        h: ["10 kg kjöt"] },
+      { t: "Raðaðu öllu þétt í kútinn. Afgangssaltið fer allt ofan í kútinn." },
+      { t: "Helltu blóðvatninu sem varð eftir í fötunni sem kjötið var geymt í út í kútinn. Sveinn gamli sagði að það skipti máli!" },
+      { t: "Ef blóðvatnið nær ekki upp að brún kútsins, bættu við vatni." },
+      { t: "Settu þungt farg ofan á og lok yfir, þannig að kjötið komist ekki í snertingu við loft. Geymdu kútinn í kuldanum." }
     ],
-    skref: [
-      { t: "Skolaðu hrísgrjónin og sjóddu þau í 6 dl af vatni í um 15 mínútur." },
-      { t: "Skerðu kjúklinginn í bita og saxaðu laukinn, hvítlaukinn og engiferið.",
-        ab: "Skerðu paprikuna líka núna. Hún fer út í pottinn í skrefi 4." },
-      { t: "Steiktu laukinn, hvítlaukinn og engiferið í olíu í 2–3 mínútur. Bættu karrímaukinu við og steiktu í 1 mínútu í viðbót." },
-      { t: "Bættu kjúklingnum við og brúnaðu hann. Helltu kókosmjólkinni yfir, settu paprikuna út í og láttu malla í 12–15 mínútur." },
-      { t: "Hrærðu spínatinu út í og kreistu límónusafa yfir. Berðu fram með hrísgrjónunum." }
-    ]
-  },
-  {
-    id: "graenmetislasagna",
-    nafn: "Grænmetislasagna",
-    flokkur: "Grænmetisréttir",
-    timi: 75,
-    skammtar: 6,
-    lysing: "Lasagna með sveppum, kúrbít og papriku í tómatsósu, kotasælu og bræddum osti.",
-    hraefni: [
-      { n: "kúrbítur", t: "1 kúrbítur" },
-      { n: "paprika", t: "1 rauð paprika" },
-      { n: "sveppir", t: "250 g sveppir" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "hvítlaukur", t: "2 hvítlauksrif" },
-      { n: "tómatar í dós", t: "2 dósir niðursoðnir tómatar" },
-      { n: "oregano", t: "1 tsk oregano", g: 1 },
-      { n: "lasagnablöð", t: "9 lasagnablöð" },
-      { n: "kotasæla", t: "250 g kotasæla" },
-      { n: "rifinn ostur", t: "200 g rifinn ostur" },
-      { n: "ólífuolía", t: "Ólífuolía", g: 1 },
-      { n: "salt", t: "Salt og pipar", g: 1 }
-    ],
-    skref: [
-      { t: "Hitaðu ofninn í 200°C og skerðu allt grænmetið í litla bita." },
-      { t: "Steiktu laukinn og hvítlaukinn í olíu. Bættu sveppum, kúrbít og papriku við og steiktu í um 8 mínútur." },
-      { t: "Bættu tómötunum og oregano við. Saltaðu, pipraðu og láttu malla í 10 mínútur.",
-        ab: "Taktu eldfasta mótið, lasagnablöðin, kotasæluna og ostinn fram núna. Þú þarft allt í næsta skrefi." },
-      { t: "Raðaðu í eldfast mót: sósa, lasagnablöð, kotasæla. Endurtaktu þrisvar og endaðu á sósu og rifnum osti." },
-      { t: "Bakaðu í 35–40 mínútur, þar til blöðin eru mjúk og osturinn gylltur. Láttu standa í 10 mínútur áður en þú skerð." }
-    ]
-  },
-  {
-    id: "linsubaunasupa",
-    nafn: "Linsubaunasúpa",
-    flokkur: "Súpur",
-    timi: 40,
-    skammtar: 4,
-    lysing: "Matarmikil og ódýr súpa úr rauðum linsubaunum með mildu karríi.",
-    hraefni: [
-      { n: "linsubaunir", t: "2 dl rauðar linsubaunir" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "gulrót", t: "2 gulrætur" },
-      { n: "hvítlaukur", t: "2 hvítlauksrif" },
-      { n: "karríduft", t: "1 msk karríduft", g: 1 },
-      { n: "tómatar í dós", t: "1 dós niðursoðnir tómatar" },
-      { n: "grænmetiskraftur", t: "1 grænmetisteningur í 1 l af vatni" },
-      { n: "kókosmjólk", t: "1 dl kókosmjólk" },
-      { n: "olía", t: "Olía til steikingar", g: 1 },
-      { n: "salt", t: "Salt", g: 1 }
-    ],
-    skref: [
-      { t: "Saxaðu laukinn, gulræturnar og hvítlaukinn.",
-        ab: "Skolaðu linsubaunirnar í sigti núna. Þær fara út í súpuna í skrefi 3." },
-      { t: "Steiktu grænmetið í olíu í 5 mínútur. Bættu karríduftinu við og steiktu í 1 mínútu í viðbót." },
-      { t: "Bættu linsubaunum, tómötum og grænmetiskrafti við og láttu sjóða í 20–25 mínútur." },
-      { t: "Maukaðu súpuna með töfrasprota, hrærðu kókosmjólkinni út í og smakkaðu til með salti." }
-    ]
-  },
-  {
-    id: "kjotsupa",
-    nafn: "Íslensk kjötsúpa",
-    flokkur: "Súpur",
-    timi: 90,
-    skammtar: 6,
-    lysing: "Lambakjöt og rótargrænmeti sem fær að malla lengi. Enn betri daginn eftir.",
-    hraefni: [
-      { n: "lambakjöt", t: "1 kg lambasúpukjöt" },
-      { n: "súpujurtir", t: "1 dl þurrkaðar súpujurtir", g: 1 },
-      { n: "hrísgrjón", t: "3 msk hrísgrjón" },
-      { n: "rófur", t: "400 g rófur" },
-      { n: "kartöflur", t: "400 g kartöflur" },
-      { n: "gulrót", t: "3 gulrætur" },
-      { n: "laukur", t: "1 laukur" },
-      { n: "hvítkál", t: "¼ hvítkálshaus" },
-      { n: "salt", t: "Salt og pipar", g: 1 }
-    ],
-    skref: [
-      { t: "Settu kjötið í stóran pott með 2 lítrum af köldu vatni og láttu suðuna koma upp. Fleyttu froðuna ofan af." },
-      { t: "Bættu salti, súpujurtum og hrísgrjónum við og láttu malla undir loki í 40 mínútur.",
-        ab: "Flysjaðu og skerðu rófurnar, kartöflurnar, gulræturnar og laukinn núna. Það tekur sinn tíma og þarf að vera tilbúið í næsta skrefi." },
-      { t: "Bættu rófum, kartöflum, gulrótum og lauk út í og láttu malla í 25 mínútur.",
-        ab: "Skerðu hvítkálið í strimla meðan súpan mallar." },
-      { t: "Bættu hvítkálinu við og sjóddu í 10 mínútur í viðbót. Smakkaðu til með salti og pipar." }
-    ]
-  },
-  {
-    id: "skuffukaka",
-    nafn: "Skúffukaka",
-    flokkur: "Eftirréttir",
-    timi: 50,
-    skammtar: 12,
-    lysing: "Mjúk súkkulaðikaka í ofnskúffu með súkkulaðikremi og kókosmjöli.",
-    hraefni: [
-      { n: "hveiti", t: "5 dl hveiti", g: 1 },
-      { n: "sykur", t: "4 dl sykur", g: 1 },
-      { n: "kakó", t: "1 dl kakó + 3 msk í kremið" },
-      { n: "lyftiduft", t: "2 tsk lyftiduft og 1 tsk matarsódi", g: 1 },
-      { n: "egg", t: "2 egg" },
-      { n: "mjólk", t: "2½ dl mjólk" },
-      { n: "smjör", t: "250 g smjör (200 g í deigið, 50 g í kremið)" },
-      { n: "flórsykur", t: "400 g flórsykur" },
-      { n: "kaffi", t: "4 msk uppáhellt kaffi" },
-      { n: "kókosmjöl", t: "Kókosmjöl til að strá yfir" }
-    ],
-    skref: [
-      { t: "Hitaðu ofninn í 180°C og smyrðu ofnskúffu.",
-        ab: "Bræddu öll 250 g af smjörinu núna svo það verði orðið volgt þegar þú þarft það í skrefi 3." },
-      { t: "Blandaðu hveiti, sykri, kakói, lyftidufti og matarsóda saman í skál." },
-      { t: "Hrærðu eggjunum, mjólkinni og 200 g af brædda smjörinu út í þar til deigið er slétt." },
-      { t: "Helltu deiginu í skúffuna og bakaðu í 20–25 mínútur.",
-        ab: "Gerðu kremið meðan kakan bakast, það er næsta skref." },
-      { t: "Hrærðu saman flórsykri, 3 msk af kakói, restinni af brædda smjörinu og kaffinu í krem." },
-      { t: "Láttu kökuna kólna aðeins. Smyrðu kreminu yfir og stráðu kókosmjöli yfir." }
-    ]
-  },
-  {
-    id: "ponnukokur",
-    nafn: "Pönnukökur",
-    flokkur: "Eftirréttir",
-    timi: 35,
-    skammtar: 4,
-    lysing: "Þunnar íslenskar pönnukökur með sykri, eða sultu og rjóma.",
-    hraefni: [
-      { n: "hveiti", t: "3 dl hveiti", g: 1 },
-      { n: "lyftiduft", t: "½ tsk matarsódi og ½ tsk salt", g: 1 },
-      { n: "egg", t: "2 egg" },
-      { n: "mjólk", t: "5 dl mjólk" },
-      { n: "smjör", t: "50 g smjör" },
-      { n: "vanilla", t: "1 tsk vanilludropar", g: 1 },
-      { n: "sykur", t: "Sykur til að strá yfir", g: 1 }
-    ],
-    skref: [
-      { t: "Bræddu smjörið á pönnukökupönnunni og helltu því í skál.",
-        ab: "Taktu eggin og mjólkina úr kæli núna svo deigið verði ekki of kalt." },
-      { t: "Blandaðu þurrefnunum saman. Hrærðu eggin og helminginn af mjólkinni út í þar til deigið er slétt." },
-      { t: "Bættu restinni af mjólkinni, smjörinu og vanillunni við. Láttu deigið standa í 10 mínútur ef tími gefst." },
-      { t: "Hitaðu pönnuna vel og steiktu þunnar pönnukökur, um 30 sekúndur á hvorri hlið. Stráðu sykri yfir og rúllaðu upp." }
+    athugasemdir: [
+      "Tilbúið eftir 10 daga.",
+      "Suða: lambakjöt í 1 klst, rollukjöt í 2 klst. Gott er að bæta rófu út í.",
+      "Bannað að fituhreinsa kjötið áður en það er soðið."
     ]
   }
 ];
