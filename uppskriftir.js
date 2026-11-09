@@ -33,14 +33,14 @@ var FLOKKAR = [
   { nafn: "Grautar og morgunmatur", engin: "Enginn grautur",         litur: "#a67c12" },
   { nafn: "Sósur og meðlæti",       engin: "Ekkert meðlæti",         litur: "#c0392b", tillogur: false },
   { nafn: "Eftirréttir",            engin: "Enginn eftirréttur",     litur: "#c2577f", tillogur: false },
-  { nafn: "Verkun og geymsla",      engin: "Engin verkun",           litur: "#4d7a99", tillogur: false }
+  { nafn: "Verkun og geymsla",      engin: "Engin verkun",           litur: "#4d7a99", tillogur: false, handahof: false }
 ];
 
 /* Flokkar hráefna í síunni. Hráefni sem er ekki hér lendir í „Annað". */
 var HRAEFNAFLOKKAR = [
-  { nafn: "Grænmeti",                   litur: "#3f8a3a", hraefni: ["laukur", "rauðkál", "paprika", "hvítlaukur"] },
+  { nafn: "Grænmeti",                   litur: "#3f8a3a", hraefni: ["laukur", "rauðkál", "paprika", "hvítlaukur", "rófa"] },
   { nafn: "Ávextir",                    litur: "#c0392b", hraefni: ["epli"] },
-  { nafn: "Kjöt og fiskur",             litur: "#8b3a2b", hraefni: ["kindahakk", "nautahakk", "kjúklingabringur", "lambakjöt"] },
+  { nafn: "Kjöt og fiskur",             litur: "#8b3a2b", hraefni: ["kindahakk", "nautahakk", "kjúklingabringur", "lambakjöt", "saltkjöt"] },
   { nafn: "Mjólkurvörur og egg",        litur: "#2f6fa8", hraefni: ["egg", "mjólk", "rjómi", "sýrður rjómi", "grísk jógúrt", "kotasæla", "ostur", "mexíkóostur", "smjör", "smjörlíki"] },
   { nafn: "Pasta, hrísgrjón og baunir", litur: "#a67c12", hraefni: ["hrísgrjón", "haframjöl"] },
   { nafn: "Hnetur og fræ",              litur: "#8a5a2b", hraefni: ["graskersfræ", "hnetur", "hörfræ", "jarðhnetur", "kasjúhnetur", "möndluflögur", "sesamfræ"] },
@@ -292,6 +292,32 @@ var UPPSKRIFTIR = [
     athugasemdir: [
       "Farsið er fryst sem búðingur og svo steikt eða soðið sem bollur."
     ]
+  },
+
+  {
+    id: "saltkjot-suda",
+    nafn: "Matreiðsla saltkjöts",
+    flokkur: "Kjötréttir",
+    timi: 70,
+    timiTexti: "1–2 klst",
+    skammtar: "Magn eftir þörfum",
+    hraefni: [
+      { n: "saltkjöt", t: "Saltkjöt, eftir þörfum" },
+      { n: "vatn", t: "Vatn", g: 1 },
+      { n: "rófa", t: "Rófa (ef vill)", v: 1 }
+    ],
+    skref: [
+      { t: "Láttu suðuna koma upp á nýju vatni í stórum potti. Það þarf ekki að salta vatnið." },
+      { t: "Settu saltkjötið út í sjóðandi vatnið, án þess að fituhreinsa það. Hafðu nóg vatn til að fljóti yfir kjötið.",
+        h: ["Saltkjöt"] },
+      { t: "Sjóddu lambakjöt í 1 klst og rollukjöt í 2 klst. Rófan má fara út í hvenær sem er, en í síðasta lagi þegar korter er eftir.",
+        h: ["Rófa (ef vill)"],
+        ab: "Byrjaðu á kartöflu- og rófustöppunni og baununum meðan kjötið sýður." }
+    ],
+    athugasemdir: [
+      "Bannað að fituhreinsa kjötið áður en það er soðið."
+    ],
+    tillaga: "Berðu fram með kartöflu- og rófustöppu og baunum."
   },
 
   {

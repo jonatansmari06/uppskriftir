@@ -127,6 +127,35 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 .aegtil { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; margin-top: 22px; }
 .aegtil h2 { margin: 0; }
 .hreinsahr { padding: 9px 14px; font-size: 15px; }
+.haushnappar { display: -webkit-flex; display: flex; }
+.haushnappar .hnappur { margin-left: 8px; }
+.stimi { display: inline-block; font-size: 13px; font-weight: 600; color: #2e6a57; background: #e3ece5; border-radius: 6px; padding: 1px 7px; margin-right: 4px; }
+.minbox { margin-top: 28px; background: #fff; border: 1px solid #d6ddd5; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #5e6b63; }
+.minbox b { display: block; color: #1d2721; font-size: 17px; margin-bottom: 4px; }
+.minbox .hnappur { display: block; text-align: center; margin-top: 12px; }
+.rautt { color: #a33 !important; }
+.teljarabox { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: space-between; justify-content: space-between; background: #2e6a57; color: #fff; border-radius: 12px; padding: 12px 16px; margin-bottom: 18px; }
+.teljarabox .dags { color: #cfe3d8; }
+.teljarabox.hle { background: #7a6a3a; }
+.teljari { font-size: 40px; font-weight: 300; font-variant-numeric: tabular-nums; -webkit-font-feature-settings: "tnum"; font-feature-settings: "tnum"; line-height: 1.1; }
+.form h2 { margin-top: 26px; }
+.flabel { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .1em; color: #5e6b63; margin: 16px 0 4px; }
+.finp { display: block; width: 100%; font: inherit; font-size: 18px; color: #1d2721; background: #fff; border: 1px solid #c9d3cb; border-radius: 8px; padding: 10px 12px; -webkit-appearance: none; }
+textarea.finp { resize: vertical; }
+select.finp { background: #fff; }
+.frod { display: -webkit-flex; display: flex; margin: 0 -6px; }
+.fdalkur { -webkit-flex: 1; flex: 1; padding: 0 6px; min-width: 0; }
+.hrrod { display: -webkit-flex; display: flex; -webkit-align-items: flex-start; align-items: flex-start; margin-top: 8px; }
+.hrrod .magn { width: 30%; -webkit-flex: none; flex: none; margin-right: 8px; }
+.hrrod .heiti, .hrrod textarea { -webkit-flex: 1; flex: 1; min-width: 0; }
+.taka { display: block; width: 44px; text-align: center; font-size: 20px; line-height: 44px; color: #8a958e; text-decoration: none; }
+.baeta { display: block; text-align: center; margin-top: 10px; }
+.skrod { margin-top: 10px; }
+.villa { color: #a33; margin-top: 16px; }
+.blad { background: #fff; border: 1px solid #d6ddd5; border-radius: 12px; padding: 22px 22px 26px; margin-top: 4px; }
+.bladmeta { border-collapse: collapse; margin-top: 10px; font-size: 16px; }
+.bladmeta td { padding: 3px 18px 3px 0; }
+.bladmeta td:first-child { color: #5e6b63; }
 .utgafa { text-align: center; font-size: 13px; color: #8a958e; margin-top: 36px; }
 .tomt { color: #5e6b63; padding: 30px 10px; text-align: center; }
 
@@ -138,7 +167,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 </head>
 <body>
 <div id="app"></div>
-<script src="uppskriftir.js?v=2026-11-08d"></script>
+<script src="uppskriftir.js?v=2026-11-09a"></script>
 <script>
 (function () {
   var app = document.getElementById("app");
@@ -163,11 +192,17 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
 
   var byId = {};
   var i;
-  for (i = 0; i < UPPSKRIFTIR.length; i++) {
-    byId[UPPSKRIFTIR[i].id] = UPPSKRIFTIR[i];
-    var hl = UPPSKRIFTIR[i].hraefni;
-    for (var q = 0; q < hl.length; q++) hl[q].nn = typeof hl[q].n === "string" ? [hl[q].n] : (hl[q].n || []);
+  function undirbua(r) {
+    byId[r.id] = r;
+    var hl = r.hraefni;
+    for (var q = 0; q < hl.length; q++) hl[q].nn = typeof hl[q].n === "string" ? (hl[q].n ? [hl[q].n] : []) : (hl[q].n || []);
   }
+  /* Uppskriftir sem skrifaðar eru beint á iPadinum */
+  var MINAR = "Mínar uppskriftir";
+  var minar = lesa("minar", []);
+  FLOKKAR.push({ nafn: MINAR, engin: "Engin mín uppskrift", litur: "#2e6a57" });
+  for (i = 0; i < minar.length; i++) UPPSKRIFTIR.push(minar[i]);
+  for (i = 0; i < UPPSKRIFTIR.length; i++) undirbua(UPPSKRIFTIR[i]);
   if (typeof HRAEFNAFLOKKAR === "undefined") window.HRAEFNAFLOKKAR = [{ nafn: "Annað", hraefni: [] }];
 
   /* Íslensk stafrófsröð (gamli Safari raðar íslensku ekki rétt sjálfur) */
@@ -300,7 +335,9 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     if (sia.tmax < SMAX && r.timi > sia.tmax) return false;
     return true;
   }
+  function iHandahofi(r) { return flokkurInfo(r.flokkur).handahof !== false; }
   function passar(r) {
+    if (!iHandahofi(r)) return false;
     if (inniheldur(sia.utan, r.flokkur)) return false;
     if (!passarTima(r)) return false;
     if (sia.hraefni.length) return skor(r).notar.length > 0;
@@ -337,6 +374,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
   function hraefnaHopar() {
     var oll = [], j, k;
     for (j = 0; j < UPPSKRIFTIR.length; j++) {
+      if (!iHandahofi(UPPSKRIFTIR[j])) continue;
       var h = UPPSKRIFTIR[j].hraefni;
       for (k = 0; k < h.length; k++) {
         if (h[k].g) continue;
@@ -360,7 +398,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
   function flokkarMedUppskriftum() {
     var ut = [];
     for (var j = 0; j < FLOKKAR.length; j++)
-      for (var k = 0; k < UPPSKRIFTIR.length; k++)
+      if (FLOKKAR[j].handahof !== false) for (var k = 0; k < UPPSKRIFTIR.length; k++)
         if (UPPSKRIFTIR[k].flokkur === FLOKKAR[j].nafn) { ut.push(FLOKKAR[j]); break; }
     return ut;
   }
@@ -385,6 +423,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     for (var j = fra; j >= 0; j--) if (passar(byId[rq.rod[j]])) return j;
     return -1;
   }
+  function fjoldiIHandahofi() { var n = 0; for (var j = 0; j < UPPSKRIFTIR.length; j++) if (iHandahofi(UPPSKRIFTIR[j])) n++; return n; }
   function fjoldiPassar() { var n = 0; for (var j = 0; j < UPPSKRIFTIR.length; j++) if (passar(UPPSKRIFTIR[j])) n++; return n; }
 
   /* ---------- Skjáir ---------- */
@@ -399,7 +438,9 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     nuna = null; geymaNuna();
     var d = new Date();
     var h = '<div class="sida"><div class="haus"><div><div class="dags">' + VIKUDAGAR[d.getDay()] + ' ' + d.getDate() + '. ' + MANUDIR[d.getMonth()] + '</div>' +
-      '<h1>Hvað á að elda?</h1></div><a class="hnappur" data-a="handahof">Handahóf</a></div>';
+      '<h1>Hvað á að elda?</h1></div><div class="haushnappar">' +
+      '<a class="hnappur ljos" data-a="ny">' + (drog ? 'Halda áfram (' + e(klstMin(lidid(drog))) + ')' : '+ Ný uppskrift') + '</a>' +
+      '<a class="hnappur" data-a="handahof">Handahóf</a></div></div>';
     var t = tillogur();
     if (t.length) {
       h += '<h2>Tillögur</h2><div class="listi">';
@@ -412,7 +453,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
       if (inn) h += '<div class="flokkhaus" style="color:' + litur(f.nafn) + '"><span class="flokkmerki" style="background:' + litur(f.nafn) + '"></span>' + e(f.nafn) + '</div>' +
         '<div class="listi lit" style="border-top-color:' + litur(f.nafn) + '">' + inn + '</div>';
     }
-    h += '<p class="utgafa">Útgáfa 8. nóvember (4)</p></div>';
+    h += '<p class="utgafa">Útgáfa 9. nóvember (1)</p></div>';
     app.innerHTML = h; upp();
   }
 
@@ -432,7 +473,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
       (r.lysing ? '<p class="lysing">' + e(r.lysing) + '</p>' : '') +
       '<div class="dalkar"><div class="dalkur"><h2>Hráefni</h2>' + hraefnalisti(r) + '</div>' +
       '<div class="dalkur"><h2>Aðferð</h2><ol class="skrefalisti">';
-    for (var j = 0; j < r.skref.length; j++) h += '<li>' + e(r.skref[j].t) + '</li>';
+    for (var j = 0; j < r.skref.length; j++) h += '<li>' + (typeof r.skref[j].min === "number" ? '<span class="stimi">eftir ' + r.skref[j].min + ' mín</span> ' : '') + e(r.skref[j].t) + '</li>';
     h += '</ol></div></div>';
     if (r.athugasemdir && r.athugasemdir.length) {
       h += '<h2>Athugasemdir</h2><ul class="minnisblad">';
@@ -442,7 +483,146 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
     if (r.tillaga) h += '<h2>Tillaga</h2><div class="tillagatexti">' + e(r.tillaga) + '</div>';
     h +=
       '<a class="hnappur stor" data-a="elda" data-id="' + e(r.id) + '">Byrja að elda</a>' +
-      '<a class="smalink" data-a="merkja" data-id="' + e(r.id) + '">Ég eldaði þetta án eldunarhams</a></div>';
+      '<a class="smalink" data-a="merkja" data-id="' + e(r.id) + '">Ég eldaði þetta án eldunarhams</a>';
+    if (r.min) {
+      h += '<div class="minbox"><b>Mín uppskrift</b>Skráð ' + e(dagsTexti(r.skrad)) + (r.valinnFlokkur ? ' · ætluð í flokkinn ' + e(r.valinnFlokkur) : '') + '. Hún er bara vistuð á þessum iPad.' +
+        '<a class="hnappur ljos" data-a="yfirlit" data-id="' + e(r.id) + '">Yfirlit til að senda Claude</a>' +
+        '<a class="smalink rautt" data-a="eydaMin" data-id="' + e(r.id) + '">' + (eydaStadfest === r.id ? 'Ýttu aftur til að eyða uppskriftinni' : 'Eyða uppskrift') + '</a></div>';
+    }
+    h += '</div>';
+    app.innerHTML = h; upp();
+  }
+
+  /* ---------- Mínar uppskriftir: form, teljari, yfirlit ---------- */
+  var drog = lesa("drog", null);
+  var eydaStadfest = null, hendaStadfest = false, nyVilla = "";
+  function lidid(d) {
+    if (!d) return 0;
+    var nu = Date.now();
+    return nu - d.byrjun - d.hle - (d.hleByrjun ? nu - d.hleByrjun : 0);
+  }
+  function tveir(n) { return n < 10 ? "0" + n : "" + n; }
+  function klukka(ms) {
+    var s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+    return (h ? h + ":" + tveir(m) : m) + ":" + tveir(s % 60);
+  }
+  function klstMin(ms) {
+    var m = Math.max(0, Math.round(ms / 60000));
+    if (m < 60) return m + " mín";
+    return Math.floor(m / 60) + " klst" + (m % 60 ? " " + (m % 60) + " mín" : "");
+  }
+  function dagsTexti(ts) { var d = new Date(ts || Date.now()); return d.getDate() + ". " + MANUDIR[d.getMonth()] + " " + d.getFullYear(); }
+  function geymaDrog() { skrifa("drog", drog); }
+  function nyttDrog() {
+    return { byrjun: Date.now(), hle: 0, hleByrjun: null, nafn: "", flokkur: FLOKKAR[0].nafn, skammtar: "",
+             hraefni: [{ m: "", h: "" }], skref: [], nyttSkref: "", athugasemdir: "" };
+  }
+
+  function nyUppskrift() {
+    nuna = null; geymaNuna();
+    if (!drog) { drog = nyttDrog(); geymaDrog(); }
+    var d = drog, j;
+    var h = '<div class="sida"><a class="til-baka" data-a="heim">‹ Uppskriftir</a>' +
+      '<div class="teljarabox' + (d.hleByrjun ? ' hle' : '') + '"><div><div class="dags">' + (d.hleByrjun ? 'Í hléi' : 'Tími') + '</div>' +
+      '<div class="teljari" id="teljari">' + klukka(lidid(d)) + '</div></div>' +
+      '<a class="hnappur ljos" data-a="nyHle">' + (d.hleByrjun ? 'Halda áfram' : 'Hlé') + '</a></div>' +
+      '<h1>Ný uppskrift</h1>' +
+      '<div class="form">' +
+      '<label class="flabel" for="f-nafn">Nafn</label><input class="finp" id="f-nafn" data-f="nafn" type="text" value="' + e(d.nafn) + '" placeholder="T.d. Pasta með því sem var til">' +
+      '<div class="frod"><div class="fdalkur"><label class="flabel" for="f-flokkur">Flokkur</label><select class="finp" id="f-flokkur" data-f="flokkur">';
+    for (j = 0; j < FLOKKAR.length; j++) if (FLOKKAR[j].nafn !== MINAR)
+      h += '<option' + (FLOKKAR[j].nafn === d.flokkur ? ' selected' : '') + '>' + e(FLOKKAR[j].nafn) + '</option>';
+    h += '</select></div><div class="fdalkur"><label class="flabel" for="f-skammtar">Skammtar</label><input class="finp" id="f-skammtar" data-f="skammtar" type="text" value="' + e(d.skammtar) + '" placeholder="T.d. 3–4"></div></div>' +
+      '<h2>Hráefni</h2>';
+    for (j = 0; j < d.hraefni.length; j++) {
+      h += '<div class="hrrod"><input class="finp magn" id="f-hm-' + j + '" data-f="hm-' + j + '" type="text" value="' + e(d.hraefni[j].m) + '" placeholder="Magn">' +
+        '<input class="finp heiti" id="f-hh-' + j + '" data-f="hh-' + j + '" type="text" value="' + e(d.hraefni[j].h) + '" placeholder="Hráefni, t.d. laukur">' +
+        '<a class="taka" data-a="nyTakaHr" data-v="' + j + '">✕</a></div>';
+    }
+    h += '<a class="hnappur ljos baeta" data-a="nyHraefni">+ Bæta við hráefni</a>' +
+      '<h2>Skref</h2>';
+    for (j = 0; j < d.skref.length; j++) {
+      h += '<div class="skrod"><div class="stimi">Skref ' + (j + 1) + ' · eftir ' + d.skref[j].min + ' mín</div>' +
+        '<div class="hrrod"><textarea class="finp" id="f-sk-' + j + '" data-f="sk-' + j + '" rows="2">' + e(d.skref[j].t) + '</textarea>' +
+        '<a class="taka" data-a="nyTakaSk" data-v="' + j + '">✕</a></div></div>';
+    }
+    h += '<label class="flabel" for="f-nytt">Næsta skref</label><textarea class="finp" id="f-nytt" data-f="nyttSkref" rows="3" placeholder="Skrifaðu það sem þú gerir núna">' + e(d.nyttSkref) + '</textarea>' +
+      '<a class="hnappur baeta" data-a="nySkref">+ Bæta við skrefi</a>' +
+      '<h2>Athugasemdir</h2><textarea class="finp" id="f-ath" data-f="athugasemdir" rows="3" placeholder="Ein athugasemd í hverja línu">' + e(d.athugasemdir) + '</textarea>' +
+      (nyVilla ? '<p class="villa">' + e(nyVilla) + '</p>' : '') +
+      '<a class="hnappur stor" data-a="nyVista">Vista uppskrift</a>' +
+      '<a class="smalink rautt" data-a="nyHenda">' + (hendaStadfest ? 'Ýttu aftur til að henda drögunum' : 'Henda drögum') + '</a>' +
+      '</div></div>';
+    app.innerHTML = h;
+  }
+
+  /* Allt sem er skrifað vistast strax, svo ekkert tapist ef skjárinn slökknar */
+  function formInntak(ev) {
+    var t = ev.target, f = t && t.getAttribute && t.getAttribute("data-f");
+    if (!f || !drog) return;
+    var v = t.value, m;
+    if ((m = /^hm-(\d+)$/.exec(f))) drog.hraefni[+m[1]].m = v;
+    else if ((m = /^hh-(\d+)$/.exec(f))) drog.hraefni[+m[1]].h = v;
+    else if ((m = /^sk-(\d+)$/.exec(f))) drog.skref[+m[1]].t = v;
+    else drog[f] = v;
+    geymaDrog();
+  }
+  document.addEventListener("input", formInntak, false);
+  document.addEventListener("change", formInntak, false);
+  document.addEventListener("keyup", formInntak, false);
+  setInterval(function () {
+    var el = document.getElementById("teljari");
+    if (el && drog) el.innerHTML = klukka(lidid(drog));
+  }, 1000);
+
+  function vistaMina() {
+    var d = drog, nafn = (d.nafn || "").replace(/^\s+|\s+$/g, "");
+    if (!nafn) { nyVilla = "Skrifaðu nafn á uppskriftina áður en þú vistar."; nyUppskrift(); return; }
+    if (d.nyttSkref && d.nyttSkref.replace(/\s/g, "")) d.skref.push({ t: d.nyttSkref, min: Math.floor(lidid(d) / 60000) });
+    var ms = lidid(d), min = Math.max(1, Math.round(ms / 60000)), hr = [], sk = [], ath = [], j;
+    for (j = 0; j < d.hraefni.length; j++) {
+      var mg = (d.hraefni[j].m || "").replace(/^\s+|\s+$/g, ""), ht = (d.hraefni[j].h || "").replace(/^\s+|\s+$/g, "");
+      if (!mg && !ht) continue;
+      hr.push({ n: ht.toLowerCase(), t: (mg ? mg + " " : "") + ht });
+    }
+    for (j = 0; j < d.skref.length; j++) if (d.skref[j].t && d.skref[j].t.replace(/\s/g, "")) sk.push({ t: d.skref[j].t, min: d.skref[j].min });
+    var linur = (d.athugasemdir || "").split("\n");
+    for (j = 0; j < linur.length; j++) if (linur[j].replace(/\s/g, "")) ath.push(linur[j]);
+    var r = { id: "min-" + Date.now(), nafn: nafn, flokkur: MINAR, valinnFlokkur: d.flokkur, timi: min, timiTexti: klstMin(ms),
+              skammtar: (d.skammtar || "").replace(/^\s+|\s+$/g, ""), hraefni: hr, skref: sk.length ? sk : [{ t: "(Engin skref skráð)" }],
+              athugasemdir: ath, min: 1, skrad: Date.now() };
+    minar.push(r); skrifa("minar", minar);
+    UPPSKRIFTIR.push(r); undirbua(r);
+    drog = null; skrifa("drog", null); nyVilla = ""; hendaStadfest = false;
+    uppskrift(r.id);
+  }
+
+  function eydaMina(id) {
+    var j;
+    for (j = minar.length - 1; j >= 0; j--) if (minar[j].id === id) minar.splice(j, 1);
+    for (j = UPPSKRIFTIR.length - 1; j >= 0; j--) if (UPPSKRIFTIR[j].id === id) UPPSKRIFTIR.splice(j, 1);
+    delete byId[id];
+    skrifa("minar", minar);
+    eydaStadfest = null;
+    heim();
+  }
+
+  function yfirlit(id) {
+    var r = byId[id]; if (!r) return heim();
+    var h = '<div class="sida"><a class="til-baka" data-a="opna" data-id="' + e(r.id) + '">‹ Til baka</a><div class="blad">' +
+      '<div class="dags">Uppskrift skráð á iPadinum · ' + e(dagsTexti(r.skrad)) + '</div><h1>' + e(r.nafn) + '</h1>' +
+      '<table class="bladmeta"><tr><td>Flokkur</td><td>' + e(r.valinnFlokkur || "") + '</td></tr>' +
+      '<tr><td>Tími</td><td>' + e(tTexti(r)) + '</td></tr>' +
+      (r.skammtar ? '<tr><td>Skammtar</td><td>' + e(r.skammtar) + '</td></tr>' : '') + '</table>' +
+      '<h2>Hráefni</h2>' + hraefnalisti(r) + '<h2>Skref</h2><ol class="skrefalisti">';
+    for (var j = 0; j < r.skref.length; j++) h += '<li>' + (typeof r.skref[j].min === "number" ? '<span class="stimi">eftir ' + r.skref[j].min + ' mín</span> ' : '') + e(r.skref[j].t) + '</li>';
+    h += '</ol>';
+    if (r.athugasemdir && r.athugasemdir.length) {
+      h += '<h2>Athugasemdir</h2><ul class="minnisblad">';
+      for (j = 0; j < r.athugasemdir.length; j++) h += '<li>' + e(r.athugasemdir[j]) + '</li>';
+      h += '</ul>';
+    }
+    h += '</div><p class="siuyfirlit" style="text-align:center">Taktu mynd af skjánum og sendu Claude. Ef blaðið er langt, taktu fleiri myndir.</p></div>';
     app.innerHTML = h; upp();
   }
 
@@ -547,7 +727,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
         for (k = 0; k < hr.length; k++) h += '<a class="flaga' + (inniheldur(sia.hraefni, hr[k]) ? ' virk' : '') + '" data-a="hrae" data-v="' + e(hr[k]) + '">' + e(cap(hr[k])) + '</a>';
         h += '</div></div>';
       }
-      h += '<p class="siuyfirlit">' + fjoldiPassar() + ' af ' + UPPSKRIFTIR.length + ' uppskriftum passa' + (hraefnaHamur ? ', raðað eftir því hve mikið þú átt' : '') +
+      h += '<p class="siuyfirlit">' + fjoldiPassar() + ' af ' + fjoldiIHandahofi() + ' uppskriftum passa' + (hraefnaHamur ? ', raðað eftir því hve mikið þú átt' : '') +
         '. <a class="smalink" style="display:inline;padding:0" data-a="hreinsa">Hreinsa síur</a></p></div>';
     }
 
@@ -645,7 +825,28 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: #
   function adgerd(a, id, v) {
     var j;
     switch (a) {
-      case "heim": heim(); break;
+      case "heim": eydaStadfest = null; hendaStadfest = false; heim(); break;
+      case "ny": nyVilla = ""; hendaStadfest = false; nyUppskrift(); upp(); break;
+      case "nyHle":
+        if (drog.hleByrjun) { drog.hle += Date.now() - drog.hleByrjun; drog.hleByrjun = null; } else drog.hleByrjun = Date.now();
+        geymaDrog(); nyUppskrift(); break;
+      case "nyHraefni": drog.hraefni.push({ m: "", h: "" }); geymaDrog(); nyUppskrift();
+        var nyjast = document.getElementById("f-hm-" + (drog.hraefni.length - 1)); if (nyjast) nyjast.focus(); break;
+      case "nyTakaHr": drog.hraefni.splice(+v, 1); if (!drog.hraefni.length) drog.hraefni.push({ m: "", h: "" }); geymaDrog(); nyUppskrift(); break;
+      case "nySkref":
+        if (drog.nyttSkref && drog.nyttSkref.replace(/\s/g, "")) {
+          drog.skref.push({ t: drog.nyttSkref, min: Math.floor(lidid(drog) / 60000) }); drog.nyttSkref = ""; geymaDrog();
+        }
+        nyUppskrift(); break;
+      case "nyTakaSk": drog.skref.splice(+v, 1); geymaDrog(); nyUppskrift(); break;
+      case "nyVista": vistaMina(); break;
+      case "nyHenda":
+        if (!hendaStadfest) { hendaStadfest = true; nyUppskrift(); break; }
+        drog = null; skrifa("drog", null); hendaStadfest = false; heim(); break;
+      case "yfirlit": yfirlit(id); break;
+      case "eydaMin":
+        if (eydaStadfest !== id) { eydaStadfest = id; uppskrift(id); break; }
+        eydaMina(id); break;
       case "opna": uppskrift(id); break;
       case "opnaH": uppskrift(id, "handahof"); break;
       case "elda": elda(id, 0); break;
